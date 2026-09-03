@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+<template id="__bundler_thumbnail" data-bg-color="#0e4d59">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#0e4d59"/>
+    <circle cx="420" cy="360" r="130" fill="none" stroke="#4aa3a1" stroke-width="42"/>
+    <circle cx="780" cy="360" r="130" fill="none" stroke="#d6b05c" stroke-width="42"/>
+    <rect x="470" y="560" width="260" height="26" rx="13" fill="#ffffff" opacity="0.85"/>
+  </svg>
+</template>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>منافع — لوحة متابعة الأداء</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&amp;family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+  html{scroll-behavior:smooth;}
+  html,body{margin:0;padding:0;background:#F2F5F4;}
+  body{font-family:'IBM Plex Sans Arabic',system-ui,sans-serif;color:#14282C;-webkit-font-smoothing:antialiased;direction:rtl;}
+  button{font-family:inherit;}
+  a{color:#0e4d59;text-decoration:none;}
+  a:hover{color:#4aa3a1;}
+  input{font-family:inherit;}
+  ::-webkit-scrollbar{width:9px;height:9px;}
+  ::-webkit-scrollbar-thumb{background:#CBD6D4;border-radius:9px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  @keyframes mfFade{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+  @keyframes mfFade2{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+  @keyframes mfRise{from{opacity:0;transform:translateY(18px) scale(.985);}to{opacity:1;transform:none;}}
+  @keyframes mfRise2{from{opacity:0;transform:translateY(18px) scale(.985);}to{opacity:1;transform:none;}}
+  @keyframes mfEnter{from{opacity:0;transform:translateY(26px);}to{opacity:1;transform:none;}}
+  @keyframes mfEnter2{from{opacity:0;transform:translateY(26px);}to{opacity:1;transform:none;}}
+  @keyframes mfCurtain{from{opacity:1;transform:none;}to{opacity:0;transform:scale(1.04);}}
+  @keyframes mfCardOut{from{opacity:1;transform:none;}to{opacity:0;transform:translateY(-26px) scale(.965);}}
+  @keyframes mfLoad{0%{transform:translateX(-100%);}100%{transform:translateX(240%);}}
+  @keyframes mfPulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.06);opacity:.85;}}
+  @keyframes mfGlow{0%,100%{box-shadow:0 0 0 0 rgba(74,163,161,0);}50%{box-shadow:0 0 0 5px rgba(74,163,161,.22);}}
+  #mfReport,#mfInitReport,#mfKpiReport{display:none;}
+  @media print{
+    html,body{background:#fff !important;}
+    #mfApp{display:none !important;}
+    body.mf-print-all #mfReport{display:block !important;}
+    body.mf-print-init #mfInitReport{display:block !important;}
+    body.mf-print-kpi #mfKpiReport{display:block !important;}
+    #mfReport *,#mfInitReport *,#mfKpiReport *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
+    @page{size:A4 portrait;margin:10mm;}
+  }
+</style>
+<script src="./kpi-data-global.js"></script>
+</helmet>
+
+<div dir="rtl" style="min-height:100vh;background:#F2F5F4;">
+<div id="mfApp">
+
+<sc-if value="{{ booting }}" hint-placeholder-val="{{ true }}">
+  <div style="position:fixed;inset:0;z-index:300;background:#0e4d59;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;">
+    <div style="position:absolute;inset:0;background:radial-gradient(700px 420px at 70% 20%, rgba(74,163,161,.35), transparent 62%),radial-gradient(560px 360px at 20% 90%, rgba(214,176,92,.22), transparent 62%);"></div>
+    <div style="position:relative;width:92px;height:92px;border-radius:22px;background:#fff;display:flex;align-items:center;justify-content:center;padding:12px;animation:mfPulse 1.6s ease-in-out infinite;">
+      <img src="manafea-logo.png" alt="منافع" style="max-width:100%;max-height:100%;display:block;">
+    </div>
+    <div style="position:relative;font-family:'Tajawal';font-weight:700;font-size:13.5px;color:rgba(255,255,255,.8);">جارٍ تحميل المؤشرات والمبادرات…</div>
+    <div style="position:relative;width:190px;height:4px;border-radius:4px;background:rgba(255,255,255,.18);overflow:hidden;">
+      <div style="width:45%;height:100%;border-radius:4px;background:#d6b05c;animation:mfLoad 1.15s cubic-bezier(.4,0,.2,1) infinite;"></div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ locked }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;inset:0;z-index:200;background:#0e4d59;display:flex;align-items:center;justify-content:center;padding:24px;overflow:auto;animation:{{ curtainAnim }};">
+    <div style="position:absolute;inset:0;background:radial-gradient(900px 520px at 78% 8%, rgba(74,163,161,.42), transparent 62%),radial-gradient(700px 420px at 12% 96%, rgba(214,176,92,.26), transparent 60%);"></div>
+    <div style="position:relative;width:100%;max-width:940px;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:0;border-radius:22px;overflow:hidden;box-shadow:0 40px 90px rgba(0,0,0,.34);animation:{{ loginCardAnim }};">
+      <div style="background:linear-gradient(150deg,#0b3f49,#125a67);padding:44px 40px;display:flex;flex-direction:column;justify-content:space-between;gap:36px;min-height:420px;">
+        <div style="width:88px;height:88px;border-radius:20px;background:#fff;display:flex;align-items:center;justify-content:center;padding:10px;">
+          <img src="manafea-logo.png" alt="منافع" style="max-width:100%;max-height:100%;display:block;">
+        </div>
+        <div>
+          <div style="width:44px;height:3px;background:#d6b05c;border-radius:3px;margin-bottom:18px;"></div>
+          <h1 style="font-family:'Tajawal';font-weight:900;font-size:31px;line-height:1.45;color:#fff;margin:0 0 14px;">لوحة متابعة الأداء</h1>
+          <p style="margin:0;font-size:14px;line-height:1.9;color:rgba(255,255,255,.72);max-width:340px;">خطة تمكين رواد ومجتمعات الأعمال في المدينتين المقدستين — المؤشرات والمبادرات في لوحة واحدة.</p>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <span style="height:4px;flex:1;border-radius:4px;background:#0e4d59;"></span>
+          <span style="height:4px;flex:1;border-radius:4px;background:#4aa3a1;"></span>
+          <span style="height:4px;flex:1;border-radius:4px;background:#d6b05c;"></span>
+        </div>
+      </div>
+      <div style="background:#fff;padding:48px 40px;display:flex;flex-direction:column;justify-content:center;">
+        <h2 style="font-family:'Tajawal';font-weight:800;font-size:21px;margin:0 0 6px;color:#14282C;">تسجيل الدخول</h2>
+        <p style="margin:0 0 26px;font-size:13px;color:#6C7B7E;">الرجاء إدخال كلمة المرور للمتابعة</p>
+        <form onSubmit="{{ onLogin }}" style="display:flex;flex-direction:column;gap:14px;">
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;color:#6C7B7E;">
+            كلمة المرور
+            <input type="password" ref="{{ passRef }}" autocomplete="current-password" style="width:100%;font-size:14px;padding:12px 14px;border-radius:11px;border:1px solid #DDE5E3;background:#F7F9F8;color:#14282C;outline:none;">
+          </label>
+          <button type="submit" style="margin-top:6px;font-family:'Tajawal';font-weight:800;font-size:15px;padding:13px;border-radius:11px;border:none;background:#0e4d59;color:#fff;cursor:pointer;box-shadow:0 8px 18px rgba(14,77,89,.26);transition:all .2s cubic-bezier(.2,.8,.2,1);" style-hover="background:#14636f;transform:translateY(-2px);box-shadow:0 14px 28px rgba(14,77,89,.34);" style-active="transform:translateY(0) scale(.985);">دخول</button>
+          <div style="min-height:18px;font-size:12.5px;color:#9E4A3E;font-weight:600;">{{ loginError }}</div>
+        </form>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<div style="position:sticky;top:0;z-index:40;background:rgba(242,245,244,.9);backdrop-filter:blur(14px);border-bottom:1px solid #E1E8E6;">
+  <div style="max-width:1560px;margin:0 auto;padding:12px 26px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+    <div style="display:flex;align-items:center;gap:13px;">
+      <img src="manafea-logo.png" alt="منافع" style="height:42px;width:auto;display:block;">
+      <span style="width:1px;height:26px;background:#DDE5E3;display:block;"></span>
+      <span style="font-family:'Tajawal';font-weight:800;font-size:13.5px;color:#14282C;">لوحة متابعة الأداء</span>
+    </div>
+    <div style="flex:1;min-width:12px;"></div>
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:#fff;border:1px solid #E1E8E6;font-size:12px;color:#6C7B7E;">
+      <span style="width:7px;height:7px;border-radius:50%;background:{{ syncColor }};"></span>
+      <span>{{ syncText }}</span>
+    </div>
+    <button onClick="{{ onRefresh }}" style="font-family:'Tajawal';font-weight:700;font-size:12.5px;color:#0e4d59;background:#fff;border:1px solid #E1E8E6;border-radius:999px;padding:8px 15px;cursor:pointer;box-shadow:0 3px 10px rgba(14,40,44,.07);transition:all .2s cubic-bezier(.2,.8,.2,1);" style-hover="background:#0e4d59;color:#fff;border-color:#0e4d59;transform:translateY(-2px);box-shadow:0 12px 24px rgba(14,77,89,.22);" style-active="transform:translateY(0) scale(.97);">تحديث البيانات ↻</button>
+    <button onClick="{{ onExport }}" style="font-family:'Tajawal';font-weight:700;font-size:12.5px;color:#0e4d59;background:#fff;border:1px solid #E1E8E6;border-radius:999px;padding:8px 15px;cursor:pointer;box-shadow:0 3px 10px rgba(14,40,44,.07);transition:all .2s cubic-bezier(.2,.8,.2,1);" style-hover="background:#0e4d59;color:#fff;border-color:#0e4d59;transform:translateY(-2px);box-shadow:0 12px 24px rgba(14,77,89,.22);" style-active="transform:translateY(0) scale(.97);">تصدير PDF ⤓</button>
+    <button onClick="{{ onOpenTree }}" title="عرض شجري يربط المحاور بالأهداف والمؤشرات والمبادرات" style="font-family:'Tajawal';font-weight:700;font-size:12.5px;color:#0e4d59;background:#fff;border:1px solid #E1E8E6;border-radius:999px;padding:8px 15px;cursor:pointer;box-shadow:0 3px 10px rgba(14,40,44,.07);transition:all .2s cubic-bezier(.2,.8,.2,1);" style-hover="background:#0e4d59;color:#fff;border-color:#0e4d59;transform:translateY(-2px);box-shadow:0 12px 24px rgba(14,77,89,.22);" style-active="transform:translateY(0) scale(.97);">العرض الشجري ⌗</button>
+    <button onClick="{{ onLogout }}" style="font-family:'Tajawal';font-weight:700;font-size:12.5px;color:#7C8A8C;background:transparent;border:1px solid transparent;border-radius:999px;padding:8px 12px;cursor:pointer;transition:all .2s cubic-bezier(.2,.8,.2,1);" style-hover="color:#9E4A3E;background:#fff;border-color:#F0DCD8;transform:translateY(-2px);" style-active="transform:translateY(0) scale(.97);">خروج</button>
+  </div>
+</div>
+
+<div style="max-width:1560px;margin:0 auto;padding:18px 26px 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap;animation:{{ enterAnim }};animation-delay:30ms;">
+  <span style="font-family:'Tajawal';font-weight:700;font-size:11.5px;color:#7C8A8C;">عرض اللوحة على</span>
+  <div style="display:flex;gap:5px;background:#fff;border:1px solid #E1E8E6;border-radius:999px;padding:5px;box-shadow:0 3px 12px rgba(14,40,44,.07);">
+    <sc-for list="{{ views }}" as="v" hint-placeholder-count="2">
+      <button onClick="{{ v.select }}" style="font-family:'Tajawal';font-weight:800;font-size:13px;padding:10px 20px;border-radius:999px;cursor:pointer;border:none;background:{{ v.bg }};color:{{ v.fg }};box-shadow:{{ v.shadow }};display:flex;align-items:center;gap:9px;transition:all .26s cubic-bezier(.2,.8,.2,1);" style-hover="transform:translateY(-2px);" style-active="transform:translateY(0) scale(.98);">
+        <span>{{ v.label }}</span>
+        <span style="font-family:'IBM Plex Sans Arabic';font-weight:600;font-size:11px;opacity:.72;">{{ v.meta }}</span>
+      </button>
+    </sc-for>
+  </div>
+  <span style="font-size:11.5px;color:#9AA8AA;text-wrap:pretty;">{{ viewHint }}</span>
+</div>
+
+<div style="max-width:1560px;margin:0 auto;padding:24px 26px 0;animation:{{ enterAnim }};animation-delay:60ms;">
+  <div style="border-radius:24px;overflow:hidden;background:linear-gradient(135deg,#0b3f49 0%,#0e4d59 46%,#155f6b 100%);position:relative;">
+    <div style="position:absolute;inset:0;background:radial-gradient(760px 460px at 88% -10%, rgba(74,163,161,.40), transparent 60%),radial-gradient(560px 360px at 4% 118%, rgba(214,176,92,.22), transparent 62%);"></div>
+    <div style="position:relative;padding:30px 32px 28px;display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:28px;align-items:center;">
+      <div>
+        <div style="display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:999px;background:rgba(214,176,92,.16);border:1px solid rgba(214,176,92,.4);color:#e6c884;font-size:11.5px;font-weight:600;margin-bottom:14px;">الأداء العام</div>
+        <h1 style="font-family:'Tajawal';font-weight:900;font-size:30px;line-height:1.4;color:#fff;margin:0 0 10px;text-wrap:pretty;">لوحة متابعة الأداء</h1>
+        <p style="margin:0 0 18px;font-size:13.5px;line-height:1.9;color:rgba(255,255,255,.7);max-width:430px;text-wrap:pretty;">{{ kpiTotal }} مؤشرات و{{ initTotal }} مبادرة مرتبطة بها. اضغط أي مؤشر أو مبادرة لعرض تفاصيله والجانب المرتبط به، ومن بطاقة المؤشر تختار سنة القياس ومستهدفاتها.</p>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
+        <sc-for list="{{ overviewRings }}" as="r" hint-placeholder-count="2">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:9px;">
+            <div style="width:132px;height:132px;border-radius:50%;background:{{ r.ring }};display:flex;align-items:center;justify-content:center;">
+              <div style="width:100px;height:100px;border-radius:50%;background:#0e4d59;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;">
+                <span style="font-family:'Tajawal';font-weight:900;font-size:27px;color:#fff;line-height:1;">{{ r.count }}</span>
+                <span style="font-size:10px;color:rgba(255,255,255,.62);">{{ r.unitLabel }}</span>
+                <span style="font-family:'Tajawal';font-weight:800;font-size:12px;color:#d6b05c;margin-top:3px;">{{ r.pctLabel }}</span>
+              </div>
+            </div>
+            <span style="font-family:'Tajawal';font-weight:800;font-size:12.5px;color:#fff;">{{ r.label }}</span>
+          </div>
+        </sc-for>
+
+        <div style="display:flex;flex-direction:column;gap:8px;flex:1;min-width:210px;">
+          <div style="font-size:10.5px;color:rgba(255,255,255,.5);padding:0 2px 1px;">أقسام الحلقتين تمثل توزيع الحالات</div>
+          <sc-for list="{{ statusRows }}" as="s" hint-placeholder-count="3">
+            <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);border-radius:13px;padding:9px 13px;display:flex;align-items:center;gap:10px;">
+              <span style="width:9px;height:9px;border-radius:50%;background:{{ s.color }};flex-shrink:0;"></span>
+              <span style="font-size:11.5px;color:rgba(255,255,255,.72);flex:1;">{{ s.label }}</span>
+              <span style="font-family:'Tajawal';font-weight:900;font-size:15px;color:#fff;">{{ s.kpi }}</span>
+              <span style="font-size:10px;color:rgba(255,255,255,.45);">مؤشرات</span>
+              <span style="font-family:'Tajawal';font-weight:900;font-size:15px;color:#fff;">{{ s.init }}</span>
+              <span style="font-size:10px;color:rgba(255,255,255,.45);">مبادرات</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="max-width:1560px;margin:0 auto;padding:14px 26px 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;animation:{{ enterAnim }};animation-delay:150ms;">
+  <sc-for list="{{ pillarCards }}" as="p" hint-placeholder-count="3">
+    <div onClick="{{ p.select }}" title="تصفية اللوحة على هذا المحور" style="background:#fff;border:1px solid {{ p.border }};border-radius:18px;padding:14px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;box-shadow:{{ p.shadow }};transition:all .28s cubic-bezier(.2,.8,.2,1);" style-hover="transform:translateY(-6px) scale(1.012);box-shadow:0 20px 40px rgba(14,77,89,.18);border-color:rgba(14,77,89,.32);" style-active="transform:translateY(-2px) scale(.995);">
+      <div style="width:70px;height:70px;border-radius:50%;background:{{ p.ring }};display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 6px 16px rgba(14,40,44,.10);">
+        <div style="width:54px;height:54px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-family:'Tajawal';font-weight:900;font-size:15px;color:{{ p.color }};">{{ p.pctLabel }}</div>
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:10.5px;color:#8C9A9C;margin-bottom:3px;">المحور {{ p.id }}</div>
+        <div style="font-family:'Tajawal';font-weight:800;font-size:14.5px;line-height:1.5;color:#14282C;">{{ p.name }}</div>
+        <div style="display:flex;align-items:center;gap:7px;margin-top:7px;flex-wrap:wrap;">
+          <span style="font-size:11px;color:{{ p.kpiInk }};font-weight:{{ p.kpiW }};">{{ p.kpiCount }} مؤشرات استراتيجية</span>
+          <span style="font-size:11px;color:#C3CDCC;">·</span>
+          <span style="font-size:11px;color:{{ p.initInk }};font-weight:{{ p.initW }};">{{ p.initCount }} مبادرات</span>
+          <span style="font-family:'Tajawal';font-weight:700;font-size:10.5px;color:{{ p.color }};background:{{ p.tint }};border-radius:999px;padding:3px 9px;">{{ p.cta }}</span>
+        </div>
+      </div>
+    </div>
+  </sc-for>
+</div>
+
+<div style="max-width:1560px;margin:0 auto;padding:14px 26px 0;animation:{{ enterAnim }};animation-delay:195ms;">
+  <div style="background:#fff;border:1px solid #E1E8E6;border-radius:18px;padding:16px 20px 14px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:13px;">
+      <span style="font-family:'Tajawal';font-weight:700;font-size:13px;color:#14282C;">{{ pulseTitle }}</span>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;">
+        <sc-for list="{{ statusRows }}" as="l" hint-placeholder-count="3">
+          <span style="display:flex;align-items:center;gap:6px;font-size:11px;color:#6C7B7E;"><i style="width:8px;height:8px;border-radius:3px;background:{{ l.color }};display:inline-block;"></i>{{ l.label }}</span>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;">
+      <sc-for list="{{ pulsePillars }}" as="p" hint-placeholder-count="3">
+        <div style="background:#FAFCFB;border:1px solid #EDF1F0;border-radius:15px;padding:13px 15px 11px;transition:all .28s cubic-bezier(.2,.8,.2,1);" style-hover="background:#fff;border-color:rgba(14,77,89,.18);box-shadow:0 14px 30px rgba(14,77,89,.13);transform:translateY(-4px);">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+            <span style="width:9px;height:9px;border-radius:3px;background:{{ p.color }};"></span>
+            <span style="font-family:'Tajawal';font-weight:800;font-size:12.5px;color:#14282C;flex:1;min-width:0;">{{ p.name }}</span>
+            <span style="font-size:10.5px;color:#9AA8AA;">{{ p.countLabel }}</span>
+          </div>
+          <div style="display:flex;gap:8px;align-items:flex-start;">
+            <sc-for list="{{ p.goals }}" as="g" hint-placeholder-count="3">
+              <div onMouseEnter="{{ g.enter }}" onMouseLeave="{{ g.leave }}" style="flex:{{ g.flex }};min-width:0;border-radius:11px;padding:9px 10px 8px;background:{{ g.bg }};border:1px solid {{ g.border }};cursor:default;transition:all .38s cubic-bezier(.2,.8,.2,1);">
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+                  <span style="font-family:'Tajawal';font-weight:800;font-size:10.5px;color:#fff;border-radius:6px;padding:2px 7px;flex-shrink:0;background:{{ p.color }};">{{ g.id }}</span>
+                  <span style="font-size:9.5px;color:#8C9A9C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ g.caption }}</span>
+                </div>
+                <div style="height:44px;margin-bottom:6px;overflow:hidden;">
+                  <div style="font-size:10.5px;line-height:1.5;color:#5D6E71;opacity:{{ g.labelOpacity }};transition:opacity .3s ease;text-wrap:pretty;">{{ g.text }}</div>
+                </div>
+                <div style="display:flex;gap:4px;align-items:flex-end;">
+                  <sc-for list="{{ g.bars }}" as="t" hint-placeholder-count="3">
+                    <div onClick="{{ t.open }}" title="{{ t.title }}" style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;">
+                      <div style="width:100%;display:flex;align-items:flex-end;height:46px;">
+                        <div style="width:100%;border-radius:5px 5px 2px 2px;height:{{ t.h }};background:{{ t.color }};box-shadow:0 2px 6px rgba(14,40,44,.12);transition:all .22s cubic-bezier(.2,.8,.2,1);" style-hover="transform:translateY(-5px);box-shadow:0 12px 20px rgba(14,40,44,.24);filter:brightness(1.08);"></div>
+                      </div>
+                      <span style="font-size:8px;color:#8C9A9C;white-space:nowrap;height:12px;opacity:{{ g.labelOpacity }};overflow:hidden;transition:opacity .3s ease;">{{ t.id }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</div>
+
+<div ref="{{ controlsRef }}" style="max-width:1560px;margin:0 auto;padding:14px 26px 0;display:flex;gap:10px;align-items:center;flex-wrap:wrap;animation:{{ enterAnim }};animation-delay:240ms;">
+  <div style="display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #E1E8E6;border-radius:999px;padding:9px 16px;flex:1;min-width:220px;max-width:340px;box-shadow:0 3px 10px rgba(14,40,44,.06);transition:all .22s cubic-bezier(.2,.8,.2,1);" style-hover="box-shadow:0 12px 24px rgba(14,77,89,.14);transform:translateY(-2px);border-color:rgba(14,77,89,.2);">
+    <span style="color:#9AA8AA;font-size:13px;">⌕</span>
+    <input type="text" placeholder="ابحث في المؤشرات والمبادرات…" value="{{ query }}" onInput="{{ onSearch }}" style="border:none;outline:none;background:transparent;font-size:13px;color:#14282C;width:100%;">
+  </div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;">
+    <sc-for list="{{ filters }}" as="f" hint-placeholder-count="4">
+      <button onClick="{{ f.select }}" style="font-family:'Tajawal';font-weight:700;font-size:12px;padding:9px 15px;border-radius:999px;cursor:pointer;border:1px solid {{ f.border }};background:{{ f.bg }};color:{{ f.fg }};box-shadow:{{ f.shadow }};transition:all .22s cubic-bezier(.2,.8,.2,1);" style-hover="transform:translateY(-3px);box-shadow:0 12px 24px rgba(14,77,89,.20);" style-active="transform:translateY(0) scale(.96);">{{ f.label }}</button>
+    </sc-for>
+  </div>
+  <div style="flex:1;"></div>
+  <sc-if value="{{ hasContext }}" hint-placeholder-val="{{ false }}">
+    <button onClick="{{ onResetAll }}" style="font-family:'Tajawal';font-weight:800;font-size:12px;padding:9px 16px;border-radius:999px;cursor:pointer;border:none;background:#0e4d59;color:#fff;box-shadow:0 8px 18px rgba(14,77,89,.24);transition:all .22s cubic-bezier(.2,.8,.2,1);" style-hover="transform:translateY(-3px);box-shadow:0 14px 26px rgba(14,77,89,.3);" style-active="transform:translateY(0) scale(.96);">مسح الكل</button>
+  </sc-if>
+</div>
+
+<sc-if value="{{ focused }}" hint-placeholder-val="{{ false }}">
+  <div style="max-width:1560px;margin:0 auto;padding:16px 26px 0;display:flex;align-items:center;gap:12px;flex-wrap:wrap;animation:mfFade .3s ease both;">
+    <button onClick="{{ onClearFocus }}" style="font-family:'Tajawal';font-weight:800;font-size:12.5px;padding:10px 17px;border-radius:999px;cursor:pointer;border:none;background:#0e4d59;color:#fff;box-shadow:0 8px 18px rgba(14,77,89,.26);transition:all .22s cubic-bezier(.2,.8,.2,1);" style-hover="transform:translateY(-3px);box-shadow:0 14px 28px rgba(14,77,89,.32);" style-active="transform:translateY(0) scale(.97);">← عودة لجميع المحاور</button>
+    <span style="font-size:12.5px;color:#7C8A8C;">{{ focusLabel }}</span>
+  </div>
+</sc-if>
+
+<sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+  <div style="max-width:1560px;margin:0 auto;padding:18px 26px 0;animation:mfFade .45s ease both;">
+    <div style="background:#fff;border:1px solid #E1E8E6;border-radius:18px;padding:24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+      <div>
+        <div style="font-family:'Tajawal';font-weight:800;font-size:15px;color:#14282C;margin-bottom:5px;">لا توجد نتائج مطابقة</div>
+        <div style="font-size:12.5px;color:#7C8A8C;">{{ noResultsText }}</div>
+      </div>
+      <button onClick="{{ onResetAll }}" style="font-family:'Tajawal';font-weight:800;font-size:12.5px;padding:10px 17px;border-radius:999px;cursor:pointer;border:none;background:#0e4d59;color:#fff;box-shadow:0 8px 18px rgba(14,77,89,.26);transition:all .22s cubic-bezier(.2,.8,.2,1);" style-hover="transform:translateY(-3px);box-shadow:0 14px 28px rgba(14,77,89,.32);" style-active="transform:translateY(0) scale(.97);">مسح البحث والفلاتر</button>
+    </div>
+  </div>
+</sc-if>
+
+<div ref="{{ boardRef }}" style="max-width:1560px;margin:0 auto;padding:16px 26px 70px;display:grid;gap:18px;align-items:start;grid-template-columns:{{ boardCols }};transition:grid-template-columns .55s cubic-bezier(.2,.8,.2,1);animation:{{ enterAnim }};animation-delay:330ms;">
+  <sc-for list="{{ boardPillars }}" as="p" hint-placeholder-count="3">
+    <div style="background:#fff;border:1px solid #E1E8E6;border-radius:20px;overflow:hidden;box-shadow:0 4px 14px rgba(14,40,44,.05);transition:all .28s cubic-bezier(.2,.8,.2,1);animation:{{ p.anim }};" style-hover="transform:translateY(-6px) scale(1.008);box-shadow:0 22px 46px rgba(14,77,89,.18);border-color:rgba(14,77,89,.28);">
+      <div onClick="{{ p.focus }}" title="{{ p.headHint }}" style="padding:20px 20px 18px;background:{{ p.headBg }};color:{{ p.headInk }};cursor:pointer;transition:filter .25s ease;" style-hover="filter:brightness(1.06);">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
+          <div style="flex:1;min-width:0;">
+            <div style="font-size: 11px; opacity: .8; letter-spacing: .5px; margin-bottom: 5px; color: #FFFFFF">المحور {{ p.id }}</div>
+            <h2 style="font-family: 'Tajawal'; font-weight: 800; font-size: 17.5px; line-height: 1.5; margin: 0; color: #FFFFFF; text-wrap: pretty">{{ p.name }}</h2>
+          </div>
+          <div style="font-family: 'Tajawal'; font-weight: 900; font-size: 26px; line-height: 1; color: #FFFFFF; flex-shrink: 0">{{ p.pctLabel }}</div>
+        </div>
+        <div style="height:12px;border-radius:8px;background:{{ p.trackBg }};overflow:hidden;margin-top:20px;">
+          <div style="height:100%;border-radius:8px;width:{{ p.barW }};transition:width .7s cubic-bezier(.2,.8,.2,1);background-color:#FFFFFF;box-shadow:0 0 0 1px rgba(255,255,255,.6);"></div>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 9px; font-size: 11px; color: #FFFFFF">
+          <span style="display:flex;align-items:center;gap:6px;opacity:.95;"><i style="width:8px;height:8px;border-radius:50%;background:#FFFFFF;box-shadow:0 0 0 1px rgba(58,43,8,.2);display:inline-block;"></i>منجز</span>
+          <span style="opacity:.8;">{{ p.countLabel }}</span>
+        </div>
+      </div>
+
+      <div style="padding:12px;display:grid;gap:10px;align-items:start;grid-template-columns:{{ p.objCols }};min-height:{{ p.bodyMinH }};transition:min-height .45s cubic-bezier(.2,.8,.2,1);">
+        <sc-if value="{{ p.noneMatch }}" hint-placeholder-val="{{ false }}">
+          <div style="grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:26px 14px;border:1px dashed #DDE5E3;border-radius:16px;background:#FAFCFB;animation:mfFade .4s ease both;">
+            <span style="font-family:'Tajawal';font-weight:800;font-size:13px;color:#5D6E71;">{{ p.emptyText }}</span>
+            <span style="font-size:11.5px;color:#9AA8AA;">جرّب حالة أخرى أو امسح البحث</span>
+          </div>
+        </sc-if>
+
+        <sc-for list="{{ p.objectives }}" as="o" hint-placeholder-count="3">
+          <div style="border:1px solid #EDF1F0;border-radius:16px;background:#FAFCFB;overflow:hidden;animation:{{ o.anim }};animation-delay:{{ o.delay }};transition:all .26s cubic-bezier(.2,.8,.2,1);" style-hover="background:#fff;border-color:rgba(14,77,89,.24);box-shadow:0 16px 32px rgba(14,77,89,.14);transform:translateY(-4px);">
+            <button onClick="{{ o.toggle }}" style="width:100%;display:flex;align-items:flex-start;gap:10px;background:none;border:none;text-align:right;padding:14px 12px;cursor:pointer;color:#14282C;">
+              <span style="font-family:'Tajawal';font-weight:800;font-size:12.5px;color:#fff;border-radius:7px;padding:4px 9px;flex-shrink:0;background:{{ o.color }};">{{ o.id }}</span>
+              <span style="font-size:13px;line-height:1.7;flex:1;text-wrap:pretty;">{{ o.text }}</span>
+              <span style="flex-shrink:0;color:#9AA8AA;font-size:14px;transition:transform .18s ease;transform:{{ o.chev }};">›</span>
+            </button>
+            <div style="padding:0 10px 8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <span style="font-family:'Tajawal';font-weight:700;font-size:10.5px;color:{{ o.color }};background:{{ o.tint }};border-radius:999px;padding:3px 9px;">{{ o.countLabel }}</span>
+              <span style="flex:1;height:6px;border-radius:4px;background:#EAEFEE;overflow:hidden;display:block;min-width:60px;"><span style="display:block;height:100%;border-radius:4px;width:{{ o.barW }};background:{{ o.color }};"></span></span>
+              <span style="font-family:'Tajawal';font-weight:800;font-size:11.5px;color:#14282C;">{{ o.pctLabel }}</span>
+            </div>
+
+            <sc-if value="{{ o.open }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:0 10px 12px;display:flex;flex-direction:column;gap:8px;animation:mfFade .28s cubic-bezier(.2,.8,.2,1) both;">
+                <sc-for list="{{ o.items }}" as="k" hint-placeholder-count="3">
+                  <div onClick="{{ k.select }}" style="border:1px solid {{ k.border }};border-radius:14px;padding:12px 14px;cursor:pointer;background:{{ k.bg }};transition:all .24s cubic-bezier(.2,.8,.2,1);" style-hover="border-color:rgba(14,77,89,.26);transform:translateY(-4px);box-shadow:0 14px 26px rgba(14,77,89,.15);">
+                    <div style="display:flex;align-items:flex-start;gap:9px;margin-bottom:9px;">
+                      <span style="font-family:'Tajawal';font-weight:800;font-size:10.5px;color:#fff;background:{{ k.badgeColor }};border-radius:7px;padding:3px 8px;flex-shrink:0;">{{ k.id }}</span>
+                      <span style="font-size:12.5px;line-height:1.6;flex:1;color:#14282C;text-wrap:pretty;">{{ k.name }}</span>
+                      <span style="font-family:'Tajawal';font-weight:700;font-size:10.5px;color:{{ k.statusColor }};background:{{ k.statusTint }};border-radius:999px;padding:3px 9px;flex-shrink:0;white-space:nowrap;">{{ k.statusLabel }}</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:11px;color:#6C7B7E;margin-bottom:8px;">
+                      <span>{{ k.metaA }}</span>
+                      <span>{{ k.metaB }}</span>
+                      <div style="flex:1;min-width:16px;"></div>
+                      <span style="font-family:'Tajawal';font-weight:700;font-size:10.5px;color:#0e4d59;background:#EEF4F3;border-radius:999px;padding:3px 9px;">{{ k.chip }}</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:9px;">
+                      <div style="flex:1;height:8px;border-radius:6px;background:#EAEFEE;overflow:hidden;">
+                        <div style="height:100%;border-radius:6px;width:{{ k.barW }};background:{{ k.statusColor }};transition:width .6s cubic-bezier(.2,.8,.2,1);"></div>
+                      </div>
+                      <span style="font-family:'Tajawal';font-weight:800;font-size:12px;color:#14282C;">{{ k.pctLabel }}</span>
+                    </div>
+                    <sc-if value="{{ k.showMonths }}" hint-placeholder-val="{{ false }}">
+                      <div style="display:flex;gap:3px;align-items:flex-end;height:26px;margin-top:9px;">
+                        <sc-for list="{{ k.months }}" as="m" hint-placeholder-count="12">
+                          <div title="{{ m.title }}" style="flex:1;border-radius:3px 3px 1px 1px;height:{{ m.h }};background:{{ m.color }};"></div>
+                        </sc-for>
+                      </div>
+                    </sc-if>
+                  </div>
+                </sc-for>
+                <sc-if value="{{ o.empty }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size:12px;color:#8C9A9C;padding:8px 4px;">{{ o.emptyText }}</div>
+                </sc-if>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-for>
+
+  <sc-if value="{{ focused }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:10px;animation:{{ railAnim }};">
+      <div style="font-size:11px;color:#8C9A9C;padding:2px 4px;">تنقّل بين المحاور</div>
+      <sc-for list="{{ otherPillars }}" as="q" hint-placeholder-count="2">
+        <div onClick="{{ q.go }}" title="عرض هذا المحور" style="cursor:pointer;border-radius:16px;padding:16px 14px;background:{{ q.bg }};color:{{ q.ink }};box-shadow:0 4px 14px rgba(14,40,44,.08);animation:{{ q.anim }};animation-delay:{{ q.delay }};transition:all .28s cubic-bezier(.2,.8,.2,1);" style-hover="transform:translateY(-5px) scale(1.02);box-shadow:0 18px 34px rgba(14,77,89,.2);" style-active="transform:translateY(-1px) scale(.99);">
+          <div style="font-size: 10.5px; opacity: .75; margin-bottom: 5px; color: #FFFFFF">المحور {{ q.id }}</div>
+          <div style="font-family: 'Tajawal'; font-weight: 800; font-size: 14px; line-height: 1.5; color: #FFFFFF">{{ q.name }}</div>
+          <div style="font-family: 'Tajawal'; font-weight: 900; font-size: 20px; margin-top: 10px; color: #FFFFFF">{{ q.pctLabel }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+</div>
+
+<sc-if value="{{ kmodal.show }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ onOverlayClick }}" style="position:fixed;inset:0;background:rgba(9,32,37,.55);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;z-index:80;padding:22px;">
+    <div style="background:#fff;border-radius:22px;width:100%;max-width:820px;max-height:90vh;overflow-y:auto;animation:mfRise .26s cubic-bezier(.2,.8,.2,1) both;">
+      <div style="padding:22px 26px;background:{{ kmodal.headBg }};color:#fff;position:sticky;top:0;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
+          <div>
+            <div style="display:inline-block;font-size:11px;font-family:'Tajawal';font-weight:800;padding:4px 10px;border-radius:8px;background:rgba(255,255,255,.18);margin-bottom:10px;">{{ kmodal.eyebrow }}</div>
+            <h3 style="font-family:'Tajawal';font-weight:800;font-size:18.5px;line-height:1.6;margin:0;max-width:580px;text-wrap:pretty;">{{ kmodal.name }}</h3>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+            <button onClick="{{ onExportKpi }}" title="طباعة بطاقة المؤشر" style="background:rgba(255,255,255,.18);border:none;border-radius:999px;padding:8px 14px;cursor:pointer;font-family:'Tajawal';font-weight:700;font-size:12px;color:#fff;transition:all .2s cubic-bezier(.2,.8,.2,1);" style-hover="background:rgba(255,255,255,.34);transform:translateY(-2px);" style-active="transform:translateY(0) scale(.96);">تصدير PDF ⤓</button>
+            <button onClick="{{ onClose }}" style="background:rgba(255,255,255,.18);border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:14px;color:#fff;transition:all .2s cubic-bezier(.2,.8,.2,1);" style-hover="background:rgba(255,255,255,.34);transform:rotate(90deg);">✕</button>
+          </div>
+        </div>
+        <div style="display:flex;gap:20px;margin-top:16px;flex-wrap:wrap;align-items:center;font-size:12.5px;">
+          <span style="display:flex;align-items:center;gap:7px;font-weight:600;"><i style="width:9px;height:9px;border-radius:50%;background:{{ kmodal.statusColor }};display:inline-block;"></i>{{ kmodal.statusLabel }}</span>
+          <span style="opacity:.85;">الإنجاز <b style="font-family:'Tajawal';font-weight:900;font-size:15px;">{{ kmodal.pctLabel }}</b></span>
+          <span style="opacity:.8;">آخر تحديث {{ kmodal.date }}</span>
+        </div>
+      </div>
+
+      <div style="padding:20px 26px 26px;">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:11px;">
+          <span style="font-family:'Tajawal';font-weight:700;font-size:12px;color:#6C7B7E;">المستهدفات السنوية — سنة القياس</span>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <sc-for list="{{ years }}" as="y" hint-placeholder-count="4">
+              <button onClick="{{ y.select }}" style="font-family:'Tajawal';font-weight:800;font-size:11.5px;padding:6px 13px;border-radius:999px;cursor:pointer;border:1px solid {{ y.mBorder }};background:{{ y.mBg }};color:{{ y.mFg }};transition:all .22s cubic-bezier(.2,.8,.2,1);" style-hover="transform:translateY(-2px);box-shadow:0 10px 20px rgba(14,77,89,.16);" style-active="transform:translateY(0) scale(.96);">{{ y.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:9px;">
+          <sc-for list="{{ kmodal.years }}" as="y" hint-placeholder-count="4">
+            <div style="border:1px solid {{ y.border }};background:{{ y.bg }};border-radius:13px;padding:11px 13px;">
+              <div style="font-size:10.5px;color:#8C9A9C;margin-bottom:4px;">{{ y.label }}</div>
+              <div style="font-family:'Tajawal';font-weight:900;font-size:17px;color:{{ y.ink }};line-height:1;">{{ y.value }}</div>
+              <div style="height:6px;border-radius:4px;background:#EAEFEE;overflow:hidden;margin-top:9px;">
+                <div style="height:100%;border-radius:4px;width:{{ y.barW }};background:{{ y.bar }};"></div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="font-family:'Tajawal';font-weight:700;font-size:12px;color:#6C7B7E;margin:20px 0 10px;">المستهدفات الشهرية — {{ kmodal.monthlyYear }} (المجموع {{ kmodal.monthlyTotal }})</div>
+        <div style="background:#F5F8F7;border-radius:16px;padding:14px 16px;">
+          <div style="display:flex;gap:6px;align-items:flex-end;height:120px;">
+            <sc-for list="{{ kmodal.months }}" as="m" hint-placeholder-count="12">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px;height:100%;">
+                <span style="font-family:'Tajawal';font-weight:800;font-size:9.5px;color:#14282C;">{{ m.value }}</span>
+                <div title="{{ m.title }}" style="width:100%;border-radius:5px 5px 2px 2px;height:{{ m.h }};background:{{ m.color }};"></div>
+                <span style="font-size:8.5px;color:#8C9A9C;">{{ m.label }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:flex;gap:16px;margin-top:11px;flex-wrap:wrap;font-size:10.5px;color:#6C7B7E;">
+            <span style="display:flex;align-items:center;gap:6px;"><i style="width:8px;height:8px;border-radius:2px;background:#2E7D5B;display:inline-block;"></i>أشهر منجزة تراكميًا</span>
+            <span style="display:flex;align-items:center;gap:6px;"><i style="width:8px;height:8px;border-radius:2px;background:#C7D2D0;display:inline-block;"></i>مستهدف متبقٍ</span>
+          </div>
+        </div>
+
+        <sc-if value="{{ kmodal.hasInits }}" hint-placeholder-val="{{ false }}">
+          <div style="font-family:'Tajawal';font-weight:700;font-size:12px;color:#6C7B7E;margin:20px 0 10px;">المبادرات المرتبطة</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <sc-for list="{{ kmodal.inits }}" as="v" hint-placeholder-count="2">
+              <div onClick="{{ v.go }}" style="border:1px solid #E1E8E6;border-radius:13px;padding:11px 14px;cursor:pointer;background:#F9FBFA;display:flex;align-items:center;gap:11px;flex-wrap:wrap;transition:all .22s cubic-bezier(.2,.8,.2,1);" style-hover="transform:translateY(-3px);box-shadow:0 12px 24px rgba(61,148,145,.16);border-color:rgba(74,163,161,.4);">
+                <span style="font-family:'Tajawal';font-weight:800;font-size:10.5px;color:#fff;background:#1f5f6b;border-radius:7px;padding:3px 8px;">{{ v.id }}</span>
+                <span style="font-size:12.5px;flex:1;min-width:160px;color:#14282C;">{{ v.name }}</span>
+                <span style="width:96px;height:7px;border-radius:5px;background:#EAEFEE;overflow:hidden;display:block;"><span style="display:block;height:100%;border-radius:5px;width:{{ v.barW }};background:{{ v.color }};"></span></span>
+                <span style="font-family:'Tajawal';font-weight:800;font-size:12px;color:#14282C;">{{ v.pctLabel }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <div style="font-family:'Tajawal';font-weight:700;font-size:12px;color:#6C7B7E;margin:20px 0 10px;">بطاقة المؤشر</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:9px;">
+          <sc-for list="{{ kmodal.fields }}" as="f" hint-placeholder-count="10">
+            <div style="background:#F5F8F7;border-radius:12px;padding:10px 13px;">
+              <div style="font-size:10.5px;color:#8C9A9C;font-weight:600;margin-bottom:4px;">{{ f.label }}</div>
+              <div style="font-size:13px;font-weight:600;color:#14282C;line-height:1.6;">{{ f.value }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px;margin-top:9px;">
+          <sc-for list="{{ kmodal.longFields }}" as="f" hint-placeholder-count="3">
+            <div style="background:#F5F8F7;border-radius:12px;padding:12px 14px;border-right:3px solid {{ kmodal.accent }};">
+              <div style="font-size:10.5px;color:#8C9A9C;font-weight:600;margin-bottom:5px;">{{ f.label }}</div>
+              <div style="font-size:13px;color:#2F4145;line-height:1.85;text-wrap:pretty;">{{ f.value }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ imodal.show }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ onOverlayClick }}" style="position:fixed;inset:0;background:rgba(9,32,37,.55);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;z-index:80;padding:22px;">
+    <div style="background:#fff;border-radius:22px;width:100%;max-width:780px;max-height:90vh;overflow-y:auto;animation:mfRise .26s cubic-bezier(.2,.8,.2,1) both;">
+      <div style="padding:22px 26px;background:linear-gradient(135deg,#1f5f6b,#2f7f7a);color:#fff;position:sticky;top:0;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
+          <div>
+            <div style="display:inline-block;font-size:11px;font-family:'Tajawal';font-weight:800;padding:4px 10px;border-radius:8px;background:rgba(255,255,255,.2);margin-bottom:10px;">{{ imodal.eyebrow }}</div>
+            <h3 style="font-family:'Tajawal';font-weight:800;font-size:18.5px;line-height:1.6;margin:0;max-width:560px;text-wrap:pretty;">{{ imodal.name }}</h3>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+            <button onClick="{{ onExportInit }}" title="طباعة بطاقة المبادرة" style="background:rgba(255,255,255,.2);border:none;border-radius:999px;padding:8px 14px;cursor:pointer;font-family:'Tajawal';font-weight:700;font-size:12px;color:#fff;transition:all .2s cubic-bezier(.2,.8,.2,1);" style-hover="background:rgba(255,255,255,.36);transform:translateY(-2px);" style-active="transform:translateY(0) scale(.96);">تصدير PDF ⤓</button>
+            <button onClick="{{ onClose }}" style="background:rgba(255,255,255,.2);border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:14px;color:#fff;transition:all .2s cubic-bezier(.2,.8,.2,1);" style-hover="background:rgba(255,255,255,.36);transform:rotate(90deg);">✕</button>
+          </div>
+        </div>
+        <div style="display:flex;gap:20px;margin-top:16px;flex-wrap:wrap;align-items:center;font-size:12.5px;">
+          <span style="display:flex;align-items:center;gap:7px;font-weight:600;"><i style="width:9px;height:9px;border-radius:50%;background:{{ imodal.statusColor }};display:inline-block;"></i>{{ imodal.statusLabel }}</span>
+          <span style="opacity:.9;">الإنجاز <b style="font-family:'Tajawal';font-weight:900;font-size:15px;">{{ imodal.pctLabel }}</b></span>
+          <span style="opacity:.85;">{{ imodal.dates }}</span>
+        </div>
+      </div>
+
+      <div style="padding:20px 26px 26px;">
+        <div style="background:#F5F8F7;border-radius:14px;padding:13px 16px;font-size:13px;line-height:1.85;color:#2F4145;border-right:3px solid #1f5f6b;text-wrap:pretty;">{{ imodal.description }}</div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:9px;margin-top:14px;">
+          <sc-for list="{{ imodal.fields }}" as="f" hint-placeholder-count="5">
+            <div style="background:#F5F8F7;border-radius:12px;padding:10px 13px;">
+              <div style="font-size:10.5px;color:#8C9A9C;font-weight:600;margin-bottom:4px;">{{ f.label }}</div>
+              <div style="font-size:13px;font-weight:600;color:#14282C;line-height:1.6;">{{ f.value }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="font-family:'Tajawal';font-weight:700;font-size:12px;color:#6C7B7E;margin:20px 0 10px;">المراحل — {{ imodal.msLabel }}</div>
+        <div style="display:flex;flex-direction:column;gap:7px;">
+          <sc-for list="{{ imodal.milestones }}" as="m" hint-placeholder-count="4">
+            <div style="display:flex;align-items:center;gap:10px;background:{{ m.bg }};border-radius:12px;padding:10px 13px;">
+              <span style="width:18px;height:18px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;background:{{ m.color }};">{{ m.mark }}</span>
+              <span style="font-size:12.5px;color:#14282C;flex:1;text-wrap:pretty;">{{ m.name }}</span>
+              <span style="font-size:10.5px;color:#8C9A9C;">{{ m.state }}</span>
+            </div>
+          </sc-for>
+        </div>
+
+        <sc-if value="{{ imodal.hasOps }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;align-items:center;gap:9px;margin:20px 0 10px;flex-wrap:wrap;">
+            <span style="font-family:'Tajawal';font-weight:700;font-size:12px;color:#6C7B7E;">المؤشرات التشغيلية للمبادرة</span>
+            <span style="font-family:'Tajawal';font-weight:700;font-size:10.5px;color:#1f5f6b;background:#E8F2F2;border-radius:999px;padding:3px 9px;">{{ imodal.opLabel }}</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(225px,1fr));gap:9px;">
+            <sc-for list="{{ imodal.opKpis }}" as="q" hint-placeholder-count="3">
+              <div style="background:#F5F8F7;border:1px solid #E7EDEC;border-radius:13px;padding:11px 13px;transition:all .24s cubic-bezier(.2,.8,.2,1);" style-hover="background:#fff;border-color:rgba(31,95,107,.28);box-shadow:0 12px 24px rgba(31,95,107,.12);transform:translateY(-3px);">
+                <div style="font-size:11.5px;color:#2F4145;line-height:1.55;margin-bottom:9px;min-height:35px;text-wrap:pretty;">{{ q.name }}</div>
+                <div style="display:flex;align-items:baseline;gap:5px;margin-bottom:8px;">
+                  <span style="font-family:'Tajawal';font-weight:900;font-size:17px;color:#14282C;line-height:1;">{{ q.current }}</span>
+                  <span style="font-size:10.5px;color:#8C9A9C;">من {{ q.target }} {{ q.unit }}</span>
+                  <span style="flex:1;"></span>
+                  <span style="font-family:'Tajawal';font-weight:800;font-size:11.5px;color:{{ q.color }};">{{ q.pctLabel }}</span>
+                </div>
+                <div style="height:7px;border-radius:5px;background:#E4EBEA;overflow:hidden;">
+                  <div style="height:100%;border-radius:5px;width:{{ q.barW }};background:{{ q.color }};transition:width .6s cubic-bezier(.2,.8,.2,1);"></div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <div style="font-family:'Tajawal';font-weight:700;font-size:12px;color:#6C7B7E;margin:20px 0 10px;">المؤشرات الاستراتيجية المرتبطة</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <sc-for list="{{ imodal.kpis }}" as="k" hint-placeholder-count="3">
+            <div onClick="{{ k.go }}" style="border:1px solid #E1E8E6;border-radius:13px;padding:11px 14px;cursor:pointer;background:#F9FBFA;display:flex;align-items:center;gap:11px;flex-wrap:wrap;transition:all .22s cubic-bezier(.2,.8,.2,1);" style-hover="transform:translateY(-3px);box-shadow:0 12px 24px rgba(14,77,89,.14);border-color:rgba(14,77,89,.32);">
+              <span style="font-family:'Tajawal';font-weight:800;font-size:10.5px;color:#fff;background:{{ k.pillarColor }};border-radius:7px;padding:3px 8px;">{{ k.id }}</span>
+              <span style="font-size:12.5px;flex:1;min-width:160px;color:#14282C;">{{ k.name }}</span>
+              <span style="font-size:11px;color:#6C7B7E;">{{ k.current }} / {{ k.target }}</span>
+              <span style="font-family:'Tajawal';font-weight:800;font-size:12px;color:{{ k.color }};">{{ k.pctLabel }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ treeOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ onTreeOverlay }}" style="position:fixed;inset:0;background:rgba(9,32,37,.62);backdrop-filter:blur(4px);display:flex;align-items:flex-start;justify-content:center;z-index:90;padding:26px 18px;overflow-y:auto;">
+    <div style="background:#F7FAF9;border-radius:22px;width:100%;max-width:1400px;overflow:hidden;box-shadow:0 40px 90px rgba(0,0,0,.34);animation:mfRise .3s cubic-bezier(.2,.8,.2,1) both;">
+      <div style="padding:20px 26px;background:linear-gradient(135deg,#0b3f49,#155f6b);color:#fff;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+        <div>
+          <div style="display:inline-block;font-size:11px;font-family:'Tajawal';font-weight:800;padding:4px 10px;border-radius:8px;background:rgba(214,176,92,.22);color:#e6c884;margin-bottom:9px;">العرض الشجري</div>
+          <h3 style="font-family:'Tajawal';font-weight:800;font-size:19px;margin:0;line-height:1.5;">من المحاور إلى الأهداف ثم المؤشرات الاستراتيجية والمبادرات</h3>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+          <div style="display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:rgba(255,255,255,.75);">
+            <sc-for list="{{ statusRows }}" as="l" hint-placeholder-count="3">
+              <span style="display:flex;align-items:center;gap:6px;"><i style="width:8px;height:8px;border-radius:3px;background:{{ l.color }};display:inline-block;"></i>{{ l.label }}</span>
+            </sc-for>
+          </div>
+          <button onClick="{{ onCloseTree }}" style="background:rgba(255,255,255,.18);border:none;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:14px;color:#fff;transition:all .2s cubic-bezier(.2,.8,.2,1);" style-hover="background:rgba(255,255,255,.34);transform:rotate(90deg);">✕</button>
+        </div>
+      </div>
+      <div style="padding:20px 24px 26px;display:flex;flex-direction:column;gap:16px;">
+        <sc-for list="{{ treePillars }}" as="p" hint-placeholder-count="3">
+          <div style="background:#fff;border:1px solid #E1E8E6;border-radius:18px;overflow:hidden;box-shadow:0 4px 14px rgba(14,40,44,.05);">
+            <div style="padding:14px 18px;background:{{ p.headBg }};display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+              <span style="font-family:'Tajawal';font-weight:900;font-size:11.5px;color:#fff;background:rgba(255,255,255,.22);border-radius:8px;padding:4px 10px;">المحور {{ p.id }}</span>
+              <span style="font-family:'Tajawal';font-weight:800;font-size:15px;color:#fff;flex:1;min-width:180px;">{{ p.name }}</span>
+              <span style="font-size:11.5px;color:rgba(255,255,255,.86);">{{ p.countLabel }}</span>
+              <span style="font-family:'Tajawal';font-weight:900;font-size:19px;color:#fff;">{{ p.pctLabel }}</span>
+            </div>
+            <div style="padding:16px 18px;display:flex;flex-direction:column;gap:14px;">
+              <sc-for list="{{ p.objectives }}" as="o" hint-placeholder-count="3">
+                <div style="display:flex;align-items:stretch;gap:0;">
+                  <div style="width:22px;flex-shrink:0;border-left:2px solid {{ o.line }};margin:14px 0 6px;"></div>
+                  <div style="flex:1;min-width:0;padding-right:0;">
+                    <div style="display:flex;align-items:flex-start;gap:9px;margin-bottom:11px;">
+                      <span style="font-family:'Tajawal';font-weight:800;font-size:11.5px;color:#fff;background:{{ o.color }};border-radius:7px;padding:4px 9px;flex-shrink:0;">{{ o.id }}</span>
+                      <span style="font-size:12.5px;line-height:1.65;color:#14282C;flex:1;text-wrap:pretty;">{{ o.text }}</span>
+                      <span style="font-family:'Tajawal';font-weight:800;font-size:11.5px;color:{{ o.color }};flex-shrink:0;">{{ o.pctLabel }}</span>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:10px;">
+                      <div style="background:#F6F9F8;border:1px solid #EDF1F0;border-radius:14px;padding:11px 13px;">
+                        <div style="font-family:'Tajawal';font-weight:700;font-size:10.5px;color:#7C8A8C;margin-bottom:9px;">{{ o.kpiLabel }}</div>
+                        <div style="display:flex;flex-direction:column;gap:6px;">
+                          <sc-for list="{{ o.kpis }}" as="k" hint-placeholder-count="3">
+                            <div onClick="{{ k.open }}" style="display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #E7EDEC;border-right:3px solid {{ k.statusColor }};border-radius:9px;padding:7px 10px;cursor:pointer;transition:all .2s cubic-bezier(.2,.8,.2,1);" style-hover="transform:translateX(-3px);box-shadow:0 8px 18px rgba(14,77,89,.13);">
+                              <span style="font-family:'Tajawal';font-weight:800;font-size:9.5px;color:#5D6E71;flex-shrink:0;">{{ k.id }}</span>
+                              <span style="font-size:11.5px;color:#14282C;flex:1;min-width:0;line-height:1.5;">{{ k.name }}</span>
+                              <span style="font-family:'Tajawal';font-weight:800;font-size:11px;color:{{ k.statusColor }};flex-shrink:0;">{{ k.pctLabel }}</span>
+                            </div>
+                          </sc-for>
+                          <sc-if value="{{ o.noKpis }}" hint-placeholder-val="{{ false }}">
+                            <span style="font-size:11px;color:#9AA8AA;">لا مؤشرات مرتبطة</span>
+                          </sc-if>
+                        </div>
+                      </div>
+                      <div style="background:#F3F8F8;border:1px solid #E5EFEF;border-radius:14px;padding:11px 13px;">
+                        <div style="font-family:'Tajawal';font-weight:700;font-size:10.5px;color:#1f5f6b;margin-bottom:9px;">{{ o.initLabel }}</div>
+                        <div style="display:flex;flex-direction:column;gap:6px;">
+                          <sc-for list="{{ o.inits }}" as="v" hint-placeholder-count="2">
+                            <div onClick="{{ v.open }}" style="display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #E7EDEC;border-right:3px solid {{ v.statusColor }};border-radius:9px;padding:7px 10px;cursor:pointer;transition:all .2s cubic-bezier(.2,.8,.2,1);" style-hover="transform:translateX(-3px);box-shadow:0 8px 18px rgba(31,95,107,.16);">
+                              <span style="font-family:'Tajawal';font-weight:800;font-size:9.5px;color:#1f5f6b;flex-shrink:0;">{{ v.id }}</span>
+                              <span style="font-size:11.5px;color:#14282C;flex:1;min-width:0;line-height:1.5;">{{ v.name }}</span>
+                              <span style="font-size:9.5px;color:#8C9A9C;flex-shrink:0;">{{ v.opLabel }}</span>
+                              <span style="font-family:'Tajawal';font-weight:800;font-size:11px;color:{{ v.statusColor }};flex-shrink:0;">{{ v.pctLabel }}</span>
+                            </div>
+                          </sc-for>
+                          <sc-if value="{{ o.noInits }}" hint-placeholder-val="{{ false }}">
+                            <span style="font-size:11px;color:#9AA8AA;">لا مبادرات مرتبطة</span>
+                          </sc-if>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+</div>
+
+<div id="mfKpiReport" style="font-family:'IBM Plex Sans Arabic',sans-serif;color:#14282C;direction:rtl;">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12pt;padding-bottom:7pt;border-bottom:1.5pt solid #0e4d59;">
+    <div style="display:flex;align-items:center;gap:9pt;">
+      <img src="manafea-logo.png" alt="منافع" style="height:34pt;width:auto;display:block;">
+      <div>
+        <div style="font-family:'Tajawal';font-weight:900;font-size:13.5pt;line-height:1.25;">بطاقة مؤشر استراتيجي</div>
+        <div style="font-size:7.5pt;color:#5D6E71;line-height:1.5;">لوحة متابعة الأداء — خطة تمكين رواد ومجتمعات الأعمال في المدينتين المقدستين</div>
+      </div>
+    </div>
+    <div style="text-align:left;flex-shrink:0;">
+      <div style="font-family:'Tajawal';font-weight:900;font-size:21pt;color:#0e4d59;line-height:1;">{{ kmodal.pctLabel }}</div>
+      <div style="font-size:7pt;color:#5D6E71;">نسبة الإنجاز — سنة القياس {{ yearLabel }}</div>
+    </div>
+  </div>
+  <div style="height:2.5pt;background:linear-gradient(90deg,#0e4d59,#4aa3a1 55%,#d6b05c);margin-bottom:11pt;"></div>
+
+  <div style="display:flex;align-items:flex-start;gap:8pt;margin-bottom:9pt;">
+    <span style="font-family:'Tajawal';font-weight:800;font-size:9pt;color:#fff;background:#0e4d59;border-radius:4pt;padding:3pt 8pt;flex-shrink:0;">{{ kmodal.printId }}</span>
+    <div style="flex:1;min-width:0;">
+      <div style="font-family:'Tajawal';font-weight:800;font-size:12.5pt;line-height:1.45;">{{ kmodal.name }}</div>
+      <div style="font-size:7.5pt;color:#5D6E71;margin-top:3pt;">{{ kmodal.eyebrow }} — {{ kmodal.pillarName }}</div>
+    </div>
+    <span style="font-family:'Tajawal';font-weight:800;font-size:9pt;color:#fff;border-radius:4pt;padding:3pt 9pt;flex-shrink:0;background:{{ kmodal.statusColor }};">{{ kmodal.statusLabel }}</span>
+  </div>
+
+  <div style="height:9pt;border-radius:5pt;background:#EAEFEE;overflow:hidden;margin-bottom:9pt;">
+    <div style="height:100%;border-radius:5pt;width:{{ kmodal.pctLabel }};background:{{ kmodal.statusColor }};"></div>
+  </div>
+
+  <div style="background:#F5F8F7;border-radius:5pt;padding:8pt 10pt;font-size:8.5pt;line-height:1.7;color:#2F4145;border-right:3pt solid #0e4d59;">
+    <b style="font-family:'Tajawal';font-weight:800;">الهدف المرتبط · </b>{{ kmodal.objText }}
+  </div>
+
+  <div style="display:flex;align-items:center;gap:6pt;margin:11pt 0 6pt;">
+    <span style="width:6pt;height:6pt;background:#d6b05c;border-radius:1pt;flex-shrink:0;"></span>
+    <span style="font-family:'Tajawal';font-weight:800;font-size:9.5pt;flex-shrink:0;">لمحة سريعة</span>
+    
+    <span style="flex:1;height:0.5pt;background:#E3EAE8;display:block;"></span>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:6pt;">
+    <sc-for list="{{ kmodal.printStats }}" as="f" hint-placeholder-count="6">
+      <div style="flex:1;min-width:80pt;border:0.5pt solid #D9E1DF;border-radius:5pt;padding:6pt 8pt;background:#FCFDFD;">
+        <div style="font-size:7pt;color:#8C9A9C;margin-bottom:2pt;">{{ f.label }}</div>
+        <div style="font-family:'Tajawal';font-weight:800;font-size:10pt;line-height:1.3;">{{ f.value }}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:6pt;margin:11pt 0 6pt;">
+    <span style="width:6pt;height:6pt;background:#d6b05c;border-radius:1pt;flex-shrink:0;"></span>
+    <span style="font-family:'Tajawal';font-weight:800;font-size:9.5pt;flex-shrink:0;">المستهدفات السنوية</span>
+    <span style="font-size:7.5pt;color:#8C9A9C;flex-shrink:0;">2026 — 2029</span>
+    <span style="flex:1;height:0.5pt;background:#E3EAE8;display:block;"></span>
+  </div>
+  <div style="display:flex;gap:6pt;">
+    <sc-for list="{{ kmodal.years }}" as="y" hint-placeholder-count="4">
+      <div style="flex:1;border:0.5pt solid #D9E1DF;border-radius:5pt;padding:6pt 8pt;">
+        <div style="font-size:7pt;color:#8C9A9C;margin-bottom:2pt;">{{ y.label }}</div>
+        <div style="font-family:'Tajawal';font-weight:900;font-size:11pt;line-height:1;color:{{ y.ink }};">{{ y.value }}</div>
+        <div style="height:4pt;border-radius:2pt;background:#EAEFEE;overflow:hidden;margin-top:6pt;">
+          <div style="height:100%;border-radius:2pt;width:{{ y.barW }};background:{{ y.bar }};"></div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:6pt;margin:11pt 0 6pt;">
+    <span style="width:6pt;height:6pt;background:#d6b05c;border-radius:1pt;flex-shrink:0;"></span>
+    <span style="font-family:'Tajawal';font-weight:800;font-size:9.5pt;flex-shrink:0;">التوزيع الشهري للمستهدف</span>
+    <span style="font-size:7.5pt;color:#8C9A9C;flex-shrink:0;">{{ kmodal.monthlyYear }} — المجموع {{ kmodal.monthlyTotal }}</span>
+    <span style="flex:1;height:0.5pt;background:#E3EAE8;display:block;"></span>
+  </div>
+  <div style="border:0.5pt solid #D9E1DF;border-radius:5pt;padding:8pt 9pt 6pt;">
+    <div style="display:flex;gap:3pt;align-items:flex-end;height:56pt;">
+      <sc-for list="{{ kmodal.months }}" as="m" hint-placeholder-count="12">
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:2pt;height:100%;">
+          <span style="font-size:6pt;color:#14282C;font-weight:700;">{{ m.value }}</span>
+          <div style="width:100%;border-radius:2pt 2pt 0 0;height:{{ m.h }};background:{{ m.color }};"></div>
+          <span style="font-size:5.5pt;color:#8C9A9C;">{{ m.label }}</span>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:flex;gap:10pt;margin-top:6pt;font-size:6.5pt;color:#6C7B7E;">
+      <span style="display:flex;align-items:center;gap:3pt;"><i style="width:5pt;height:5pt;border-radius:1pt;background:#2E7D5B;display:inline-block;"></i>أشهر منجزة تراكميًا</span>
+      <span style="display:flex;align-items:center;gap:3pt;"><i style="width:5pt;height:5pt;border-radius:1pt;background:#C7D2D0;display:inline-block;"></i>مستهدف متبقٍ</span>
+    </div>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:6pt;margin:11pt 0 6pt;">
+    <span style="width:6pt;height:6pt;background:#d6b05c;border-radius:1pt;flex-shrink:0;"></span>
+    <span style="font-family:'Tajawal';font-weight:800;font-size:9.5pt;flex-shrink:0;">تعريف المؤشر وآلية القياس</span>
+    
+    <span style="flex:1;height:0.5pt;background:#E3EAE8;display:block;"></span>
+  </div>
+  <div>
+    <sc-for list="{{ kmodal.longFields }}" as="f" hint-placeholder-count="3">
+      <div style="background:#F7FAF9;border-radius:4pt;padding:6pt 8pt;margin-bottom:4pt;border-right:2.5pt solid #4aa3a1;">
+        <div style="font-size:7pt;color:#8C9A9C;margin-bottom:2pt;font-weight:600;">{{ f.label }}</div>
+        <div style="font-size:8.5pt;line-height:1.7;color:#2F4145;">{{ f.value }}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:6pt;margin:11pt 0 6pt;">
+    <span style="width:6pt;height:6pt;background:#d6b05c;border-radius:1pt;flex-shrink:0;"></span>
+    <span style="font-family:'Tajawal';font-weight:800;font-size:9.5pt;flex-shrink:0;">بيانات البطاقة</span>
+    
+    <span style="flex:1;height:0.5pt;background:#E3EAE8;display:block;"></span>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:5pt;">
+    <sc-for list="{{ kmodal.fields }}" as="f" hint-placeholder-count="10">
+      <div style="flex:1;min-width:95pt;border-bottom:0.5pt solid #E7EDEC;padding:3.5pt 2pt;">
+        <div style="font-size:6.5pt;color:#8C9A9C;">{{ f.label }}</div>
+        <div style="font-size:8pt;font-weight:600;line-height:1.4;">{{ f.value }}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <sc-if value="{{ kmodal.hasInits }}" hint-placeholder-val="{{ false }}">
+  <div style="display:flex;align-items:center;gap:6pt;margin:11pt 0 6pt;">
+    <span style="width:6pt;height:6pt;background:#d6b05c;border-radius:1pt;flex-shrink:0;"></span>
+    <span style="font-family:'Tajawal';font-weight:800;font-size:9.5pt;flex-shrink:0;">المبادرات المرتبطة</span>
+    
+    <span style="flex:1;height:0.5pt;background:#E3EAE8;display:block;"></span>
+  </div>
+    <div>
+      <sc-for list="{{ kmodal.inits }}" as="v" hint-placeholder-count="2">
+        <div style="display:flex;align-items:center;gap:6pt;font-size:8pt;padding:3.5pt 5pt;border-bottom:0.25pt solid #EFF3F2;">
+          <span style="width:26pt;color:#1f5f6b;font-weight:700;flex-shrink:0;">{{ v.id }}</span>
+          <span style="flex:1;">{{ v.name }}</span>
+          <span style="width:60pt;height:4pt;border-radius:2pt;background:#EAEFEE;overflow:hidden;display:block;flex-shrink:0;"><span style="display:block;height:100%;border-radius:2pt;width:{{ v.barW }};background:{{ v.color }};"></span></span>
+          <span style="width:22pt;text-align:left;font-weight:700;flex-shrink:0;">{{ v.pctLabel }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <div style="border-top:0.5pt solid #D9E1DF;margin-top:12pt;padding-top:5pt;display:flex;justify-content:space-between;align-items:center;font-size:7pt;color:#8C9A9C;">
+    <span style="display:flex;align-items:center;gap:5pt;"><i style="width:12pt;height:2pt;background:#d6b05c;display:inline-block;"></i>منافع — لوحة متابعة الأداء</span>
+    <span>تاريخ التصدير: {{ reportStamp }}</span>
+  </div>
+</div>
+
+<div id="mfInitReport" style="font-family:'IBM Plex Sans Arabic',sans-serif;color:#14282C;direction:rtl;">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12pt;padding-bottom:7pt;border-bottom:1.5pt solid #0e4d59;">
+    <div style="display:flex;align-items:center;gap:9pt;">
+      <img src="manafea-logo.png" alt="منافع" style="height:34pt;width:auto;display:block;">
+      <div>
+        <div style="font-family:'Tajawal';font-weight:900;font-size:13.5pt;line-height:1.25;">بطاقة مبادرة</div>
+        <div style="font-size:7.5pt;color:#5D6E71;line-height:1.5;">لوحة متابعة الأداء — خطة تمكين رواد ومجتمعات الأعمال في المدينتين المقدستين</div>
+      </div>
+    </div>
+    <div style="text-align:left;flex-shrink:0;">
+      <div style="font-family:'Tajawal';font-weight:900;font-size:21pt;color:#1f5f6b;line-height:1;">{{ imodal.pctLabel }}</div>
+      <div style="font-size:7pt;color:#5D6E71;">نسبة الإنجاز</div>
+    </div>
+  </div>
+  <div style="height:2.5pt;background:linear-gradient(90deg,#0e4d59,#4aa3a1 55%,#d6b05c);margin-bottom:11pt;"></div>
+
+  <div style="display:flex;align-items:flex-start;gap:8pt;margin-bottom:9pt;">
+    <span style="font-family:'Tajawal';font-weight:800;font-size:9pt;color:#fff;background:#1f5f6b;border-radius:4pt;padding:3pt 8pt;flex-shrink:0;">{{ imodal.printId }}</span>
+    <div style="flex:1;min-width:0;">
+      <div style="font-family:'Tajawal';font-weight:800;font-size:12.5pt;line-height:1.45;">{{ imodal.name }}</div>
+      <div style="font-size:7.5pt;color:#5D6E71;margin-top:3pt;">{{ imodal.eyebrow }} · {{ imodal.dates }}</div>
+    </div>
+    <span style="font-family:'Tajawal';font-weight:800;font-size:9pt;color:#fff;border-radius:4pt;padding:3pt 9pt;flex-shrink:0;background:{{ imodal.statusColor }};">{{ imodal.statusLabel }}</span>
+  </div>
+
+  <div style="height:9pt;border-radius:5pt;background:#EAEFEE;overflow:hidden;margin-bottom:9pt;">
+    <div style="height:100%;border-radius:5pt;width:{{ imodal.pctLabel }};background:{{ imodal.statusColor }};"></div>
+  </div>
+
+  <div style="background:#F5F8F7;border-radius:5pt;padding:8pt 10pt;font-size:8.5pt;line-height:1.7;color:#2F4145;border-right:3pt solid #1f5f6b;">{{ imodal.description }}</div>
+
+  <div style="display:flex;align-items:center;gap:6pt;margin:11pt 0 6pt;">
+    <span style="width:6pt;height:6pt;background:#d6b05c;border-radius:1pt;flex-shrink:0;"></span>
+    <span style="font-family:'Tajawal';font-weight:800;font-size:9.5pt;flex-shrink:0;">بيانات المبادرة</span>
+    
+    <span style="flex:1;height:0.5pt;background:#E3EAE8;display:block;"></span>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:6pt;">
+    <sc-for list="{{ imodal.fields }}" as="f" hint-placeholder-count="5">
+      <div style="flex:1;min-width:95pt;border:0.5pt solid #D9E1DF;border-radius:5pt;padding:6pt 8pt;background:#FCFDFD;">
+        <div style="font-size:7pt;color:#8C9A9C;margin-bottom:2pt;">{{ f.label }}</div>
+        <div style="font-family:'Tajawal';font-weight:800;font-size:9.5pt;line-height:1.35;">{{ f.value }}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <sc-if value="{{ imodal.hasOps }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex;align-items:center;gap:6pt;margin:11pt 0 6pt;">
+    <span style="width:6pt;height:6pt;background:#d6b05c;border-radius:1pt;flex-shrink:0;"></span>
+    <span style="font-family:'Tajawal';font-weight:800;font-size:9.5pt;flex-shrink:0;">المؤشرات التشغيلية</span>
+    <span style="font-size:7.5pt;color:#8C9A9C;flex-shrink:0;">{{ imodal.opLabel }}</span>
+    <span style="flex:1;height:0.5pt;background:#E3EAE8;display:block;"></span>
+  </div>
+    <div style="display:flex;flex-wrap:wrap;gap:6pt;">
+      <sc-for list="{{ imodal.opKpis }}" as="q" hint-placeholder-count="3">
+        <div style="flex:1;min-width:120pt;border:0.5pt solid #D9E1DF;border-radius:5pt;padding:6pt 8pt;">
+          <div style="font-size:7.5pt;color:#2F4145;line-height:1.5;margin-bottom:4pt;">{{ q.name }}</div>
+          <div style="display:flex;align-items:baseline;gap:3pt;margin-bottom:4pt;">
+            <span style="font-family:'Tajawal';font-weight:900;font-size:11pt;line-height:1;">{{ q.current }}</span>
+            <span style="font-size:6.5pt;color:#8C9A9C;">من {{ q.target }} {{ q.unit }}</span>
+            <span style="flex:1;"></span>
+            <span style="font-family:'Tajawal';font-weight:800;font-size:8pt;color:{{ q.color }};">{{ q.pctLabel }}</span>
+          </div>
+          <div style="height:4pt;border-radius:2pt;background:#EAEFEE;overflow:hidden;">
+            <div style="height:100%;border-radius:2pt;width:{{ q.barW }};background:{{ q.color }};"></div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <div style="display:flex;align-items:center;gap:6pt;margin:11pt 0 6pt;">
+    <span style="width:6pt;height:6pt;background:#d6b05c;border-radius:1pt;flex-shrink:0;"></span>
+    <span style="font-family:'Tajawal';font-weight:800;font-size:9.5pt;flex-shrink:0;">المراحل</span>
+    <span style="font-size:7.5pt;color:#8C9A9C;flex-shrink:0;">{{ imodal.msLabel }}</span>
+    <span style="flex:1;height:0.5pt;background:#E3EAE8;display:block;"></span>
+  </div>
+  <div>
+    <sc-for list="{{ imodal.milestones }}" as="m" hint-placeholder-count="4">
+      <div style="display:flex;align-items:center;gap:7pt;font-size:8.5pt;padding:3.5pt 5pt;border-bottom:0.25pt solid #EFF3F2;">
+        <span style="width:11pt;height:11pt;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:6.5pt;color:#fff;background:{{ m.color }};">{{ m.mark }}</span>
+        <span style="flex:1;">{{ m.name }}</span>
+        <span style="font-size:7pt;color:#8C9A9C;flex-shrink:0;">{{ m.state }}</span>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:6pt;margin:11pt 0 6pt;">
+    <span style="width:6pt;height:6pt;background:#d6b05c;border-radius:1pt;flex-shrink:0;"></span>
+    <span style="font-family:'Tajawal';font-weight:800;font-size:9.5pt;flex-shrink:0;">المؤشرات الاستراتيجية المرتبطة</span>
+    
+    <span style="flex:1;height:0.5pt;background:#E3EAE8;display:block;"></span>
+  </div>
+  <div>
+    <sc-for list="{{ imodal.kpis }}" as="k" hint-placeholder-count="3">
+      <div style="display:flex;align-items:center;gap:6pt;font-size:8pt;padding:3.5pt 5pt;border-bottom:0.25pt solid #EFF3F2;">
+        <span style="width:26pt;color:#7C8A8C;flex-shrink:0;">{{ k.id }}</span>
+        <span style="flex:1;">{{ k.name }}</span>
+        <span style="width:56pt;text-align:center;flex-shrink:0;color:#5D6E71;">{{ k.current }} / {{ k.target }}</span>
+        <span style="width:24pt;text-align:left;font-weight:700;flex-shrink:0;color:{{ k.color }};">{{ k.pctLabel }}</span>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="border-top:0.5pt solid #D9E1DF;margin-top:12pt;padding-top:5pt;display:flex;justify-content:space-between;align-items:center;font-size:7pt;color:#8C9A9C;">
+    <span style="display:flex;align-items:center;gap:5pt;"><i style="width:12pt;height:2pt;background:#d6b05c;display:inline-block;"></i>منافع — لوحة متابعة الأداء</span>
+    <span>تاريخ التصدير: {{ reportStamp }}</span>
+  </div>
+</div>
+
+<div id="mfReport" style="font-family:'IBM Plex Sans Arabic',sans-serif;color:#14282C;direction:rtl;">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:10pt;padding-bottom:6pt;border-bottom:1.5pt solid #0e4d59;">
+    <div style="display:flex;align-items:center;gap:8pt;">
+      <img src="manafea-logo.png" alt="منافع" style="height:30pt;width:auto;display:block;">
+      <div>
+        <div style="font-family:'Tajawal';font-weight:900;font-size:12.5pt;line-height:1.25;">تقرير متابعة الأداء — سنة القياس {{ yearLabel }}</div>
+        <div style="font-size:7pt;color:#5D6E71;">خطة تمكين رواد ومجتمعات الأعمال في المدينتين المقدستين</div>
+      </div>
+    </div>
+    <div style="text-align:left;flex-shrink:0;">
+      <div style="font-family:'Tajawal';font-weight:900;font-size:16pt;color:#0e4d59;line-height:1;">{{ kpiAvgLabel }}</div>
+      <div style="font-size:6.5pt;color:#5D6E71;">متوسط إنجاز المؤشرات الاستراتيجية</div>
+    </div>
+  </div>
+  <div style="height:2pt;background:linear-gradient(90deg,#0e4d59,#4aa3a1 55%,#d6b05c);margin-bottom:8pt;"></div>
+
+  <div style="display:flex;gap:9pt;align-items:center;border:0.5pt solid #D9E1DF;border-radius:5pt;padding:6pt 9pt;margin-bottom:7pt;background:#FCFDFD;">
+    <div style="width:62pt;height:62pt;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:{{ reportRing }};">
+      <div style="width:44pt;height:44pt;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+        <span style="font-family:'Tajawal';font-weight:900;font-size:13pt;line-height:1;color:#0e4d59;">{{ kpiTotal }}</span>
+        <span style="font-size:5.5pt;color:#5D6E71;">مؤشرات</span>
+      </div>
+    </div>
+    <div style="flex:1;min-width:0;">
+      <div style="font-family:'Tajawal';font-weight:800;font-size:9pt;margin-bottom:4pt;">الملخص التنفيذي</div>
+      <div style="display:flex;gap:7pt;flex-wrap:wrap;margin-bottom:5pt;">
+        <sc-for list="{{ statusRows }}" as="s" hint-placeholder-count="3">
+          <span style="display:flex;align-items:center;gap:3pt;font-size:7pt;color:#3C4E51;background:#F3F7F6;border-radius:3pt;padding:2pt 5pt;">
+            <i style="width:5pt;height:5pt;border-radius:50%;background:{{ s.color }};display:inline-block;"></i>
+            {{ s.label }} — <b style="font-family:'Tajawal';font-weight:800;">{{ s.kpi }}</b> مؤشرات · <b style="font-family:'Tajawal';font-weight:800;">{{ s.init }}</b> مبادرات
+          </span>
+        </sc-for>
+      </div>
+      <sc-for list="{{ pillarCards }}" as="p" hint-placeholder-count="3">
+        <div style="display:flex;align-items:center;gap:5pt;margin-top:2.5pt;">
+          <span style="font-size:6.5pt;color:#5D6E71;width:96pt;flex-shrink:0;overflow:hidden;white-space:nowrap;">{{ p.name }}</span>
+          <span style="flex:1;height:5pt;border-radius:3pt;background:#EAEFEE;overflow:hidden;display:block;"><span style="display:block;height:100%;border-radius:3pt;width:{{ p.pctLabel }};background:{{ p.color }};"></span></span>
+          <span style="font-family:'Tajawal';font-weight:800;font-size:7pt;width:18pt;text-align:left;flex-shrink:0;">{{ p.pctLabel }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <sc-for list="{{ reportPillars }}" as="p" hint-placeholder-count="3">
+    <div style="margin-bottom:6pt;break-inside:avoid;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8pt;background:{{ p.color }};color:#fff;border-radius:3pt 3pt 0 0;padding:3.5pt 6pt;">
+        <span style="font-family:'Tajawal';font-weight:800;font-size:8.5pt;flex:1;min-width:0;color:#FFFFFF;">المحور {{ p.id }} — {{ p.name }}</span>
+        <span style="font-family:'Tajawal';font-weight:900;font-size:8pt;flex-shrink:0;white-space:nowrap;color:#FFFFFF;">{{ p.kpiCount }} مؤشرات · {{ p.initCount }} مبادرات · {{ p.pctLabel }}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4pt;font-size:6pt;color:#8C9A9C;padding:2pt 5pt;border-bottom:0.5pt solid #E3EAE8;">
+        <span style="width:20pt;flex-shrink:0;">الرمز</span>
+        <span style="flex:1;">المؤشر الاستراتيجي</span>
+        <span style="width:34pt;text-align:center;flex-shrink:0;">الحالي / المستهدف</span>
+        <span style="width:20pt;text-align:center;flex-shrink:0;">الإنجاز</span>
+        <span style="width:38pt;text-align:left;flex-shrink:0;">الحالة</span>
+      </div>
+      <sc-for list="{{ p.kpis }}" as="k" hint-placeholder-count="3">
+        <div style="display:flex;align-items:center;gap:4pt;font-size:6.8pt;padding:1.6pt 5pt;border-bottom:0.25pt solid #EFF3F2;background:{{ k.rowBg }};">
+          <span style="width:20pt;color:#7C8A8C;flex-shrink:0;">{{ k.id }}</span>
+          <span style="flex:1;overflow:hidden;">{{ k.name }}</span>
+          <span style="width:34pt;text-align:center;flex-shrink:0;">{{ k.current }} / {{ k.target }}</span>
+          <span style="width:20pt;text-align:center;font-weight:700;flex-shrink:0;">{{ k.pctLabel }}</span>
+          <span style="width:38pt;text-align:left;flex-shrink:0;color:{{ k.statusColor }};font-weight:700;">{{ k.statusLabel }}</span>
+        </div>
+      </sc-for>
+      <div style="display:flex;align-items:center;gap:4pt;font-size:6pt;color:#1f5f6b;padding:2.5pt 5pt 1.5pt;background:#F1F7F7;">
+        <span style="width:20pt;flex-shrink:0;">الرمز</span>
+        <span style="flex:1;">المبادرة</span>
+        <span style="width:54pt;text-align:center;flex-shrink:0;">المؤشرات المرتبطة</span>
+        <span style="width:20pt;text-align:center;flex-shrink:0;">الإنجاز</span>
+        <span style="width:38pt;text-align:left;flex-shrink:0;">الحالة</span>
+      </div>
+      <sc-for list="{{ p.inits }}" as="v" hint-placeholder-count="2">
+        <div style="display:flex;align-items:center;gap:4pt;font-size:6.8pt;padding:1.6pt 5pt;border-bottom:0.25pt solid #EFF3F2;background:#F8FBFA;">
+          <span style="width:20pt;color:#1f5f6b;flex-shrink:0;font-weight:700;">{{ v.id }}</span>
+          <span style="flex:1;overflow:hidden;">{{ v.name }}</span>
+          <span style="width:54pt;text-align:center;flex-shrink:0;color:#5D6E71;">{{ v.kpiLabel }}</span>
+          <span style="width:20pt;text-align:center;font-weight:700;flex-shrink:0;">{{ v.pctLabel }}</span>
+          <span style="width:38pt;text-align:left;flex-shrink:0;color:{{ v.statusColor }};font-weight:700;">{{ v.statusLabel }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </sc-for>
+
+  <div style="border-top:0.5pt solid #D9E1DF;margin-top:12pt;padding-top:5pt;display:flex;justify-content:space-between;align-items:center;font-size:7pt;color:#8C9A9C;">
+    <span style="display:flex;align-items:center;gap:5pt;"><i style="width:12pt;height:2pt;background:#d6b05c;display:inline-block;"></i>منافع — لوحة متابعة الأداء</span>
+    <span>تاريخ التصدير: {{ reportStamp }}</span>
+  </div>
+</div>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900}}">
+const C = { deep:"#0e4d59", teal:"#4aa3a1", gold:"#d6b05c", ink:"#14282C", track:"#E5EBEA" };
+const AUTH_PASS = "m2026", AUTH_KEY = "kpi_dashboard_authed";
+const STATUS_ORDER = ["ok","partial","bad"];
+
+class Component extends DCLogic {
+  state = {
+    authed:false, ready:false, data:null, inits:[], sync:"loading", syncTime:"",
+    year:2026, query:"", filter:"all", pillar:null, view:"kpi",
+    treeOpen:false,
+    kpiModal:null, initModal:null,
+    loginError:"", leaving:false, entryTick:0, tick:0, open:{}, focus:null, hoverGoal:null
+  };
+  passRef = React.createRef();
+  controlsRef = React.createRef();
+  boardRef = React.createRef();
+
+  async componentDidMount(){
+    try { if(sessionStorage.getItem(AUTH_KEY) === "true") this.setState({authed:true}); } catch(e){}
+    this.toTop();
+    const mod = await new Promise(res => { const t = () => window.MANAFEA_KPI ? res(window.MANAFEA_KPI) : setTimeout(t, 30); t(); });
+    this.mod = mod;
+    const [d, i] = await Promise.all([mod.loadData(), mod.loadInitiatives()]);
+    this.setState({ data:d.data, inits:i.list, sync:d.sync, syncTime:this.now(), ready:true });
+    this._key = e => { if(e.key === "Escape") this.setState({kpiModal:null, initModal:null}); };
+    document.addEventListener("keydown", this._key);
+  }
+  componentWillUnmount(){ if(this._key) document.removeEventListener("keydown", this._key); }
+
+  toTop(){ try { window.scrollTo({top:0,behavior:"auto"}); } catch(e){ window.scrollTo(0,0); } }
+  now(){ try { return new Date().toLocaleTimeString("ar-SA",{hour:"2-digit",minute:"2-digit",numberingSystem:"latn"}); } catch(e){ return ""; } }
+  focusScroll(){
+    setTimeout(() => {
+      const el = this.boardRef.current;
+      if(!el) return;
+      const y = el.getBoundingClientRect().top + window.scrollY - 88;
+      try { window.scrollTo({top:y, behavior:"smooth"}); } catch(e){ window.scrollTo(0,y); }
+    }, 70);
+  }
+  printAs(cls, title){
+    const prev = document.title;
+    document.body.classList.add(cls);
+    document.title = title;
+    setTimeout(() => {
+      window.print();
+      setTimeout(() => { document.body.classList.remove(cls); document.title = prev; }, 900);
+    }, 60);
+  }
+  scrollToControls(){
+    setTimeout(() => {
+      const el = this.controlsRef.current;
+      if(!el) return;
+      const y = el.getBoundingClientRect().top + window.scrollY - 82;
+      try { window.scrollTo({top:y, behavior:"smooth"}); } catch(e){ window.scrollTo(0,y); }
+    }, 70);
+  }
+
+  pillarColor(id){ return id === "1" ? C.deep : id === "2" ? C.teal : C.gold; }
+  statusColor(s){ return s === "ok" ? "#2E7D5B" : s === "partial" ? "#C7761F" : "#9E4A3E"; }
+  statusTint(s){ return s === "ok" ? "#E8F3EE" : s === "partial" ? "#FAEEE1" : "#F7E9E6"; }
+  fmt(n){
+    if(n === null || n === undefined || n === "") return "—";
+    const v = Number(n);
+    if(isNaN(v)) return String(n);
+    return Math.round(v * 100) / 100 + "" === "" ? "—" : (Math.round(v*100)/100).toLocaleString("en-US");
+  }
+  rec(id){ return (this.state.data || {})[id]; }
+  targetFor(r, year){ return r && r.targets ? (Number(r.targets[year]) || 0) : 0; }
+  pctOf(r){
+    if(!r) return 0;
+    const t = this.targetFor(r, this.state.year);
+    if(t <= 0) return 0;
+    return Math.min(100, Math.round((Number(r.current_value)||0) / t * 100));
+  }
+  kpiStatus(r){ return this.mod ? this.mod.statusFromPct(this.pctOf(r)/100) : "bad"; }
+
+  opLabelFor(n){ return n === 1 ? "مؤشر تشغيلي" : n === 2 ? "مؤشران تشغيليان" : n + " مؤشرات تشغيلية"; }
+  stratLabel(n){ return n === 1 ? "مؤشر استراتيجي" : n === 2 ? "مؤشران استراتيجيان" : n + " مؤشرات استراتيجية"; }
+  opsOf(v){ return Array.isArray(v && v.op_kpis) ? v.op_kpis : []; }
+  opPct(q){ const tg = Number(q.target)||0; if(tg <= 0) return 0; return Math.min(100, Math.round((Number(q.current)||0)/tg*100)); }
+  initsForKpi(id){ return (this.state.inits || []).filter(v => (v.kpis||[]).indexOf(id) >= 0); }
+  kpisForInit(v){ return (v.kpis || []).map(id => this.rec(id)).filter(Boolean); }
+
+  matchQuery(text){
+    const q = this.state.query.trim();
+    if(!q) return true;
+    return String(text || "").indexOf(q) >= 0;
+  }
+
+  renderVals(){
+    const st = this.state;
+    const M = this.mod;
+    const P = M ? M.PILLARS : [];
+    const LBL = M ? M.STATUS_LABEL : {};
+    const MONTHS = M ? M.MONTHS_AR : [];
+    const allK = Object.values(st.data || {});
+    const allI = st.inits || [];
+
+    const riseAnim = (st.tick % 2 ? "mfRise2" : "mfRise") + " .42s cubic-bezier(.2,.8,.2,1) both";
+    const enterAnim = (st.entryTick % 2 ? "mfEnter2" : "mfEnter") + " .7s cubic-bezier(.2,.8,.2,1) both";
+
+    const selKpi = st.kpiModal, selInit = st.initModal;
+
+    /* ---- kpi list ---- */
+    const kpiVisible = allK.filter(r => {
+      if(st.pillar && r.pillar_id !== st.pillar) return false;
+      if(st.filter !== "all" && this.kpiStatus(r) !== st.filter) return false;
+      if(!this.matchQuery(r.name + " " + r.id + " " + (r.owner||""))) return false;
+      return true;
+    });
+    const kpiList = kpiVisible.map(r => {
+      const s = this.kpiStatus(r), pct = this.pctOf(r);
+      const inits = this.initsForKpi(r.id);
+      const monthly = r.monthly || [];
+      const mMax = Math.max.apply(null, monthly.concat([1]));
+      const cum = r.monthly_cum || [];
+      const cur = Number(r.current_value) || 0;
+      return {
+        id:r.id, name:r.name, pillarColor:this.pillarColor(r.pillar_id),
+        statusColor:this.statusColor(s), statusTint:this.statusTint(s), statusLabel:LBL[s] || "",
+        current:this.fmt(r.current_value), target:this.fmt(this.targetFor(r, st.year)),
+        barW: pct + "%", anim: riseAnim, dim:"1",
+        bg: selKpi === r.id ? "#EEF4F3" : "#FBFCFC",
+        border: selKpi === r.id ? C.deep : "#EDF1F0",
+        initLabel: inits.length + " مبادرة",
+        showMonthly: st.year === 2026 && monthly.length === 12,
+        months: monthly.map((v,i) => ({
+          h: Math.max(12, Math.round(v/mMax*100)) + "%",
+          color: cum[i] <= cur ? "#2E7D5B" : "#D3DCDA",
+          title: (MONTHS[i] || "") + ": " + this.fmt(v)
+        })),
+        select: () => { this.setState(s2 => ({ kpiModal:r.id, tick:s2.tick+1 })); },
+        showInits: () => {}
+      };
+    });
+
+    /* ---- initiative list ---- */
+    const initVisible = allI.filter(v => {
+      if(st.pillar && v.pillar_id !== st.pillar) return false;
+      if(st.filter !== "all" && v.status !== st.filter) return false;
+      if(!this.matchQuery(v.name + " " + v.id + " " + (v.owner||""))) return false;
+      return true;
+    });
+    const initList = initVisible.map(v => ({
+      id:v.id, name:v.name, owner:v.owner,
+      pillarColor:this.pillarColor(v.pillar_id),
+      statusColor:this.statusColor(v.status), statusTint:this.statusTint(v.status),
+      statusLabel:LBL[v.status] || "",
+      dates: (v.start_date || "") + " → " + (v.end_date || ""),
+      kpiLabel: this.stratLabel((v.kpis || []).length),
+      barW: v.progress_pct + "%", pctLabel: v.progress_pct + "%",
+      anim: riseAnim, dim:"1",
+      bg: selInit === v.id ? "#E9F4F3" : "#FBFCFC",
+      border: selInit === v.id ? "#1f5f6b" : "#EDF1F0",
+      select: () => this.setState(s2 => ({ initModal:v.id, tick:s2.tick+1 }))
+    }));
+
+    /* ---- overview ---- */
+    const kAvgAll = allK.length ? Math.round(allK.reduce((a,r)=>a+this.pctOf(r),0)/allK.length) : 0;
+    const iAvgAll = allI.length ? Math.round(allI.reduce((a,v)=>a+(Number(v.progress_pct)||0),0)/allI.length) : 0;
+    const kAvg = kpiVisible.length ? Math.round(kpiVisible.reduce((a,r)=>a+this.pctOf(r),0)/kpiVisible.length) : 0;
+    const iAvg = initVisible.length ? Math.round(initVisible.reduce((a,v)=>a+(Number(v.progress_pct)||0),0)/initVisible.length) : 0;
+    const kCount = k => allK.filter(r => this.kpiStatus(r) === k).length;
+    const iCount = k => allI.filter(v => v.status === k).length;
+    const ringOf = (pct, color) => "conic-gradient(" + color + " 0% " + pct + "%, rgba(255,255,255,.16) " + pct + "% 100%)";
+
+    const segRingOf = (fn, total) => {
+      const n = total || 1;
+      let acc = 0; const parts = [];
+      STATUS_ORDER.forEach(k => {
+        const share = fn(k)/n*100;
+        parts.push(this.statusColor(k) + " " + acc.toFixed(2) + "% " + (acc+share).toFixed(2) + "%");
+        acc += share;
+      });
+      return "conic-gradient(" + parts.join(",") + ")";
+    };
+    const segRing = segRingOf(k => kCount(k), allK.length);
+
+    const syncMap = {
+      loading:{t:"جارٍ التحميل…", c:"#B3BEBD"},
+      synced:{t:"آخر تحديث "+st.syncTime, c:C.teal},
+      demo:{t:"بيانات تجريبية للاختبار", c:C.gold},
+      error:{t:"تعذّر تحميل الجدول — بيانات تجريبية", c:"#9E4A3E"}
+    };
+    const sync = syncMap[st.sync] || syncMap.loading;
+
+    /* ---- pillar cards ---- */
+    const pillarCards = P.map(p => {
+      const ids = p.objectives.flatMap(o => o.kpis);
+      const recs = ids.map(i => this.rec(i)).filter(Boolean);
+      const pInits = allI.filter(v => v.pillar_id === p.id);
+      const pc = st.view === "kpi"
+        ? (recs.length ? Math.round(recs.reduce((a,r)=>a+this.pctOf(r),0)/recs.length) : 0)
+        : (pInits.length ? Math.round(pInits.reduce((a,v)=>a+(Number(v.progress_pct)||0),0)/pInits.length) : 0);
+      const color = this.pillarColor(p.id);
+      const active = st.pillar === p.id;
+      const kv = st.view === "kpi";
+      return {
+        id:p.id, name:p.name, color, tint: color + "1F",
+        pctLabel: pc + "%", kpiCount: ids.length,
+        initCount: pInits.length,
+        kpiInk: kv ? "#14282C" : "#9AA8AA", kpiW: kv ? "700" : "400",
+        initInk: kv ? "#9AA8AA" : "#14282C", initW: kv ? "400" : "700",
+        ring: "conic-gradient(" + color + " 0% " + pc + "%, " + C.track + " " + pc + "% 100%)",
+        border: active ? color : "#E1E8E6",
+        shadow: active ? "0 16px 34px rgba(14,77,89,.17)" : "0 3px 12px rgba(14,40,44,.05)",
+        cta: active ? "معروض الآن" : "تصفية ←",
+        select: () => { this.setState(s2 => ({ pillar: s2.pillar === p.id ? null : p.id, tick:s2.tick+1 })); this.scrollToControls(); }
+      };
+    });
+
+    /* ---- KPI modal ---- */
+    let kmodal = { show:false, years:[], months:[], fields:[], longFields:[], inits:[], printStats:[],
+      accent:C.deep, headBg:"#0e4d59", eyebrow:"", name:"", statusColor:"#C7D2D0", statusLabel:"",
+      pctLabel:"0%", date:"", printId:"", pillarName:"", objText:"", monthlyYear:2026, monthlyTotal:"—", hasInits:false };
+    const kr = st.kpiModal ? this.rec(st.kpiModal) : null;
+    if(kr){
+      const s = this.kpiStatus(kr);
+      const color = this.pillarColor(kr.pillar_id);
+      const yrs = M ? M.YEARS : [2026,2027,2028,2029];
+      const yMax = Math.max.apply(null, yrs.map(y => this.targetFor(kr, y)).concat([1]));
+      const monthly = kr.monthly || [];
+      const mMax = Math.max.apply(null, monthly.concat([1]));
+      const cum = kr.monthly_cum || [];
+      const cur = Number(kr.current_value) || 0;
+      const linked = this.initsForKpi(kr.id);
+      kmodal = {
+        show:true, accent:color,
+        headBg: kr.pillar_id === "1" ? "linear-gradient(135deg,#0b3f49,#17697a)" : kr.pillar_id === "2" ? "linear-gradient(135deg,#2f8b89,#4aa3a1)" : "linear-gradient(135deg,#a8842f,#c9a251)",
+        eyebrow: "المحور " + kr.pillar_id + " · الهدف " + kr.objective_id + " · المؤشر " + kr.id,
+        name: kr.name,
+        statusColor:this.statusColor(s), statusLabel:LBL[s] || "",
+        pctLabel: this.pctOf(kr) + "%", date: kr.current_date || "—",
+        printId: kr.id,
+        pillarName: ((P.find(x => x.id === kr.pillar_id) || {}).name) || "",
+        objText: (((P.find(x => x.id === kr.pillar_id) || {objectives:[]}).objectives.find(o => o.id === kr.objective_id)) || {}).text || "",
+        printStats: [
+          {label:"القيمة الحالية", value: this.fmt(kr.current_value) + (kr.unit ? " " + kr.unit : "")},
+          {label:"مستهدف " + st.year, value: this.fmt(this.targetFor(kr, st.year))},
+          {label:"القيمة الأساس", value: this.fmt(kr.baseline_value)},
+          {label:"وزن المؤشر", value: kr.weight_pct ? kr.weight_pct + "%" : "—"},
+          {label:"دورية القياس", value: kr.frequency || "—"},
+          {label:"مالك المؤشر", value: kr.owner || "—"}
+        ],
+        years: yrs.map(y => {
+          const v = this.targetFor(kr, y);
+          const isCur = y === st.year;
+          return {
+            label: "مستهدف " + y, value: this.fmt(v),
+            barW: Math.round(v/yMax*100) + "%",
+            bar: isCur ? color : "#C7D2D0",
+            bg: isCur ? color + "12" : "#F5F8F7",
+            border: isCur ? color : "#EDF1F0",
+            ink: isCur ? color : C.ink
+          };
+        }),
+        monthlyYear: 2026, monthlyTotal: this.fmt(kr.target_2026),
+        months: monthly.map((v,i) => ({
+          label: (MONTHS[i] || "").slice(0,3), value: this.fmt(v),
+          h: Math.max(8, Math.round(v/mMax*100)) + "%",
+          color: cum[i] <= cur ? "#2E7D5B" : "#C7D2D0",
+          title: (MONTHS[i] || "") + " — مستهدف " + this.fmt(v) + " · تراكمي " + this.fmt(cum[i])
+        })),
+        hasInits: linked.length > 0,
+        inits: linked.map(v => ({
+          id:v.id, name:v.name, pctLabel:v.progress_pct + "%",
+          barW:v.progress_pct + "%", color:this.statusColor(v.status),
+          go: () => this.setState(s2 => ({ kpiModal:null, initModal:v.id, view:"init", tick:s2.tick+1 }))
+        })),
+        fields: [
+          {label:"القيمة الحالية", value:this.fmt(kr.current_value) + (kr.unit ? " " + kr.unit : "")},
+          {label:"القيمة الأساس " + (kr.baseline_year || ""), value:this.fmt(kr.baseline_value)},
+          {label:"مالك المؤشر", value:kr.owner || "—"},
+          {label:"نوع المؤشر", value:kr.kpi_type || "—"},
+          {label:"وزن المؤشر", value:kr.weight_pct ? kr.weight_pct + "%" : "—"},
+          {label:"دورية القياس", value:kr.frequency || "—"},
+          {label:"الوحدة", value:kr.unit || "—"},
+          {label:"قطبية المؤشر", value: kr.polarity === "+" ? "+ (كلما زاد كان أفضل)" : kr.polarity === "-" ? "- (كلما قلّ كان أفضل)" : "—"},
+          {label:"أداة القياس", value:kr.measurement_tool || "—"},
+          {label:"توفر البيانات", value:kr.data_availability || "—"}
+        ],
+        longFields: [
+          {label:"تعريف المؤشر", value:kr.definition || "—"},
+          {label:"آلية الحساب", value:kr.calc_mechanism || "—"},
+          {label:"افتراضات / مبررات", value:kr.assumptions || "—"}
+        ]
+      };
+    }
+
+    /* ---- initiative modal ---- */
+    let imodal = { show:false, fields:[], milestones:[], kpis:[], opKpis:[], hasOps:false, opLabel:"", pctLabel:"", printId:"", name:"", eyebrow:"", statusLabel:"", statusColor:"#C7D2D0", description:"", msLabel:"", dates:"" };
+    const ir = st.initModal ? allI.find(v => v.id === st.initModal) : null;
+    if(ir){
+      const done = (ir.milestones || []).filter(m => m.done).length;
+      imodal = {
+        show:true,
+        eyebrow: "المحور " + ir.pillar_id + " · الهدف " + ir.objective_id + " · المبادرة " + ir.id,
+        name: ir.name, description: ir.description || "—",
+        statusColor:this.statusColor(ir.status), statusLabel:LBL[ir.status] || "",
+        pctLabel: ir.progress_pct + "%", printId: ir.id,
+        dates: (ir.start_date || "") + " → " + (ir.end_date || ""),
+        msLabel: done + " من " + (ir.milestones || []).length + " مكتملة",
+        hasOps: this.opsOf(ir).length > 0,
+        opLabel: this.opLabelFor(this.opsOf(ir).length),
+        opKpis: this.opsOf(ir).map(q => {
+          const pct = this.opPct(q);
+          return {
+            name: q.name, current: this.fmt(q.current), target: this.fmt(q.target), unit: q.unit || "",
+            pctLabel: pct + "%", barW: pct + "%",
+            color: this.statusColor(M ? M.statusFromPct(pct/100) : "bad")
+          };
+        }),
+        fields: [
+          {label:"المالك / الجهة", value:ir.owner || "—"},
+          {label:"تاريخ البداية", value:ir.start_date || "—"},
+          {label:"تاريخ النهاية", value:ir.end_date || "—"},
+          {label:"الموازنة", value: ir.budget ? this.fmt(ir.budget) + " ريال" : "—"},
+          {label:"المؤشرات الاستراتيجية المرتبطة", value: (ir.kpis || []).join(" · ") || "—"}
+        ],
+        milestones: (ir.milestones || []).map(m => ({
+          name:m.name, mark: m.done ? "✓" : "•",
+          color: m.done ? "#2E7D5B" : "#C7D2D0",
+          bg: m.done ? "#F1F8F7" : "#F5F8F7",
+          state: m.done ? "مكتملة" : "قيد التنفيذ"
+        })),
+        kpis: this.kpisForInit(ir).map(r => ({
+          id:r.id, name:r.name, pillarColor:this.pillarColor(r.pillar_id),
+          current:this.fmt(r.current_value), target:this.fmt(this.targetFor(r, st.year)),
+          pctLabel: this.pctOf(r) + "%", color:this.statusColor(this.kpiStatus(r)),
+          go: () => this.setState(s2 => ({ initModal:null, kpiModal:r.id, view:"kpi", tick:s2.tick+1 }))
+        }))
+      };
+    }
+
+    /* ---- board (pillar → objective → cards), view aware ---- */
+    const isKpiView = st.view === "kpi";
+    const slideAnim = (st.tick % 2 ? "mfRise2" : "mfRise") + " .5s cubic-bezier(.2,.8,.2,1) both";
+    const fadeAnim = (st.tick % 2 ? "mfFade2" : "mfFade") + " .5s cubic-bezier(.2,.8,.2,1) both";
+    const filtering = !!(st.query.trim() || st.filter !== "all");
+    const kpiVisibleIds = kpiVisible.map(r => r.id);
+    const initVisibleIds = initVisible.map(v => v.id);
+
+    const boardAll = P.map(p => {
+      const color = this.pillarColor(p.id);
+      const isFocus = st.focus === p.id;
+      const allIds = p.objectives.flatMap(o => o.kpis);
+      const recs = allIds.map(i => this.rec(i)).filter(Boolean);
+      const pInits = allI.filter(v => v.pillar_id === p.id);
+      const pc = isKpiView
+        ? (recs.length ? Math.round(recs.reduce((a,r)=>a+this.pctOf(r),0)/recs.length) : 0)
+        : (pInits.length ? Math.round(pInits.reduce((a,v)=>a+(Number(v.progress_pct)||0),0)/pInits.length) : 0);
+
+      const objectives = p.objectives.map((o, oi) => {
+        const items = isKpiView
+          ? o.kpis.map(id => this.rec(id)).filter(r => r && kpiVisibleIds.indexOf(r.id) >= 0).map(r => {
+              const s = this.kpiStatus(r), pct = this.pctOf(r);
+              const monthly = r.monthly || [];
+              const mMax = Math.max.apply(null, monthly.concat([1]));
+              const cum = r.monthly_cum || [];
+              const cur = Number(r.current_value) || 0;
+              const sel = selKpi === r.id;
+              return {
+                id:r.id, name:r.name, badgeColor:color,
+                statusColor:this.statusColor(s), statusTint:this.statusTint(s), statusLabel:LBL[s] || "",
+                metaA: "الحالي " + this.fmt(r.current_value),
+                metaB: "مستهدف " + st.year + " " + this.fmt(this.targetFor(r, st.year)),
+                chip: this.initsForKpi(r.id).length + " مبادرة",
+                pctLabel: pct + "%", barW: pct + "%",
+                bg: sel ? "#EEF4F3" : "#FFFFFF", border: sel ? C.deep : "#EDF1F0",
+                showMonths: st.year === 2026 && monthly.length === 12,
+                months: monthly.map((v,i) => ({
+                  h: Math.max(12, Math.round(v/mMax*100)) + "%",
+                  color: cum[i] <= cur ? "#2E7D5B" : "#D3DCDA",
+                  title: (MONTHS[i] || "") + ": " + this.fmt(v)
+                })),
+                select: () => this.setState(s2 => ({ kpiModal:r.id, tick:s2.tick+1 }))
+              };
+            })
+          : allI.filter(v => v.objective_id === o.id && initVisibleIds.indexOf(v.id) >= 0).map(v => {
+              const sel = selInit === v.id;
+              return {
+                id:v.id, name:v.name, badgeColor:"#1f5f6b",
+                statusColor:this.statusColor(v.status), statusTint:this.statusTint(v.status),
+                statusLabel:LBL[v.status] || "",
+                metaA: v.owner || "",
+                metaB: (v.start_date || "") + " → " + (v.end_date || ""),
+                chip: this.stratLabel((v.kpis || []).length),
+                pctLabel: v.progress_pct + "%", barW: v.progress_pct + "%",
+                bg: sel ? "#E9F1F2" : "#FFFFFF", border: sel ? "#1f5f6b" : "#EDF1F0",
+                showMonths: false, months: [],
+                select: () => this.setState(s2 => ({ initModal:v.id, tick:s2.tick+1 }))
+              };
+            });
+
+        const totalCount = isKpiView ? o.kpis.length : allI.filter(v => v.objective_id === o.id).length;
+        const opc = items.length
+          ? Math.round(items.reduce((a,it)=>a+parseInt(it.pctLabel,10),0)/items.length)
+          : 0;
+        const key = st.view + "/" + p.id + "/" + o.id;
+        return {
+          id:o.id, text:o.text, color, tint: color + "18",
+          open: !!st.open[key], chev: st.open[key] ? "rotate(90deg)" : "none",
+          anim: slideAnim, delay: (oi * 55) + "ms",
+          countLabel: totalCount + (isKpiView ? " مؤشرات" : " مبادرات"),
+          pctLabel: opc + "%", barW: opc + "%",
+          items, empty: items.length === 0,
+          emptyText: isKpiView ? "لا توجد مؤشرات مطابقة." : "لا توجد مبادرات مطابقة.",
+          toggle: () => this.setState(s2 => ({ open: {...s2.open, [key]: !s2.open[key]} }))
+        };
+      });
+
+      const shown = objectives.filter(o => o.items.length > 0);
+      return {
+        id:p.id, name:p.name, color, anim: slideAnim,
+        pctLabel: pc + "%", barW: pc + "%",
+        countLabel: (isKpiView ? allIds.length + " مؤشرات" : pInits.length + " مبادرات"),
+        headHint: isFocus ? "طي العرض التفصيلي" : "عرض هذا المحور بمفرده",
+        headBg: p.id === "1" ? "linear-gradient(135deg,#0b3f49,#17697a)"
+              : p.id === "2" ? "linear-gradient(135deg,#2f8b89,#4aa3a1)"
+              : "linear-gradient(135deg,#c9a251,#e0c07a)",
+        headInk: p.id === "3" ? "#3A2B08" : "#FFFFFF",
+        trackBg: p.id === "3" ? "rgba(58,43,8,.24)" : "rgba(255,255,255,.26)",
+        objCols: isFocus ? "repeat(auto-fit,minmax(320px,1fr))" : "1fr",
+        bodyMinH: filtering ? "140px" : "0px",
+        noneMatch: filtering && shown.length === 0,
+        emptyText: isKpiView ? "لا توجد مؤشرات مطابقة في هذا المحور" : "لا توجد مبادرات مطابقة في هذا المحور",
+        objectives: filtering ? shown : objectives,
+        focus: () => {
+          this.setState(s2 => {
+            const nf = s2.focus === p.id ? null : p.id;
+            const open = {...s2.open};
+            if(nf) p.objectives.forEach(o => { open[st.view + "/" + p.id + "/" + o.id] = true; });
+            return { focus: nf, open, tick: s2.tick + 1 };
+          });
+          this.focusScroll();
+        }
+      };
+    });
+
+    const boardPillars = (st.pillar ? boardAll.filter(p => p.id === st.pillar) : boardAll)
+      .filter(p => st.focus ? p.id === st.focus : true);
+
+    /* ---- pulse (objectives per pillar, hover to expand) ---- */
+    const pulsePillars = P.map(p => {
+      const color = this.pillarColor(p.id);
+      const pInits = allI.filter(v => v.pillar_id === p.id);
+      const allIds = p.objectives.flatMap(o => o.kpis);
+      return {
+        id:p.id, name:p.name, color,
+        countLabel: isKpiView ? allIds.length + " مؤشرات" : pInits.length + " مبادرات",
+        goals: p.objectives.map(o => {
+          const hovered = st.hoverGoal === (p.id + "/" + o.id);
+          const rows = isKpiView
+            ? o.kpis.map(id => {
+                const r = this.rec(id) || {};
+                const pct = this.pctOf(r);
+                return {
+                  id, h: Math.max(18, pct) + "%",
+                  color: this.statusColor(this.kpiStatus(r)),
+                  title: id + " — " + (r.name || "") + " — " + pct + "%",
+                  open: () => this.setState(s2 => ({kpiModal:id, view:"kpi", tick:s2.tick+1}))
+                };
+              })
+            : allI.filter(v => v.objective_id === o.id).map(v => ({
+                id: v.id, h: Math.max(18, Number(v.progress_pct)||0) + "%",
+                color: this.statusColor(v.status),
+                title: v.id + " — " + v.name + " — " + v.progress_pct + "%",
+                open: () => this.setState(s2 => ({initModal:v.id, view:"init", tick:s2.tick+1}))
+              }));
+          return {
+            id:o.id, bars: rows,
+            caption: rows.length + (isKpiView ? " مؤشرات" : " مبادرات"),
+            text: hovered ? (o.text || "") : "",
+            flex: hovered ? "3.6" : "1",
+            labelOpacity: hovered ? "1" : "0",
+            bg: hovered ? "#FFFFFF" : "#F6F9F8",
+            border: hovered ? color + "55" : "#EDF1F0",
+            enter: () => this.setState({hoverGoal: p.id + "/" + o.id}),
+            leave: () => this.setState({hoverGoal: null})
+          };
+        })
+      };
+    });
+
+    /* ---- tree view ---- */
+    const treePillars = P.map(p => {
+      const color = this.pillarColor(p.id);
+      const pIds = p.objectives.flatMap(o => o.kpis);
+      const pRecs = pIds.map(i => this.rec(i)).filter(Boolean);
+      const pInits = allI.filter(v => v.pillar_id === p.id);
+      const ppc = isKpiView
+        ? (pRecs.length ? Math.round(pRecs.reduce((a,r)=>a+this.pctOf(r),0)/pRecs.length) : 0)
+        : (pInits.length ? Math.round(pInits.reduce((a,v)=>a+(Number(v.progress_pct)||0),0)/pInits.length) : 0);
+      return {
+        id:p.id, name:p.name, pctLabel: ppc + "%",
+        countLabel: pIds.length + " مؤشرات استراتيجية · " + pInits.length + " مبادرات",
+        headBg: p.id === "1" ? "linear-gradient(135deg,#0b3f49,#17697a)"
+              : p.id === "2" ? "linear-gradient(135deg,#2f8b89,#4aa3a1)"
+              : "linear-gradient(135deg,#c9a251,#e0c07a)",
+        objectives: p.objectives.map(o => {
+          const recs = o.kpis.map(i => this.rec(i)).filter(Boolean);
+          const oInits = allI.filter(v => v.objective_id === o.id);
+          const opc = recs.length ? Math.round(recs.reduce((a,r)=>a+this.pctOf(r),0)/recs.length) : 0;
+          return {
+            id:o.id, text:o.text, color, line: color + "66", pctLabel: opc + "%",
+            kpiLabel: this.stratLabel(recs.length),
+            initLabel: oInits.length + " مبادرة مرتبطة",
+            noKpis: recs.length === 0, noInits: oInits.length === 0,
+            kpis: recs.map(r => ({
+              id:r.id, name:r.name, pctLabel: this.pctOf(r) + "%",
+              statusColor: this.statusColor(this.kpiStatus(r)),
+              open: () => this.setState(s2 => ({treeOpen:false, kpiModal:r.id, view:"kpi", tick:s2.tick+1}))
+            })),
+            inits: oInits.map(v => ({
+              id:v.id, name:v.name, pctLabel: v.progress_pct + "%",
+              statusColor: this.statusColor(v.status),
+              opLabel: this.opLabelFor(this.opsOf(v).length),
+              open: () => this.setState(s2 => ({treeOpen:false, initModal:v.id, view:"init", tick:s2.tick+1}))
+            }))
+          };
+        })
+      };
+    });
+
+    /* ---- report ---- */
+    const reportPillars = P.map(p => {
+      const ids = p.objectives.flatMap(o => o.kpis);
+      const recs = ids.map(i => this.rec(i)).filter(Boolean);
+      const pc = recs.length ? Math.round(recs.reduce((a,r)=>a+this.pctOf(r),0)/recs.length) : 0;
+      return {
+        id:p.id, name:p.name, color:this.pillarColor(p.id),
+        pctLabel: pc + "%", kpiCount: ids.length,
+        initCount: allI.filter(v => v.pillar_id === p.id).length,
+        kpis: recs.map((r, ri) => {
+          const s = this.kpiStatus(r);
+          return {
+            rowBg: ri % 2 ? "#FAFCFB" : "#FFFFFF",
+            id:r.id, name:r.name,
+            current:this.fmt(r.current_value), target:this.fmt(this.targetFor(r, st.year)),
+            pctLabel: this.pctOf(r) + "%",
+            statusColor:this.statusColor(s), statusLabel:LBL[s] || ""
+          };
+        }),
+        inits: allI.filter(v => v.pillar_id === p.id).map(v => ({
+          id:v.id, name:v.name, kpiLabel:(v.kpis||[]).length + " مؤشرات",
+          pctLabel:v.progress_pct + "%",
+          statusColor:this.statusColor(v.status), statusLabel:LBL[v.status] || ""
+        }))
+      };
+    });
+
+    return {
+      locked: !st.authed, booting: !st.ready, loginError: st.loginError,
+      passRef: this.passRef, controlsRef: this.controlsRef,
+      enterAnim,
+      curtainAnim: st.leaving ? "mfCurtain .48s cubic-bezier(.4,0,.2,1) both" : "mfFade .4s ease both",
+      loginCardAnim: st.leaving ? "mfCardOut .46s cubic-bezier(.4,0,.2,1) both" : "mfRise .5s cubic-bezier(.2,.8,.2,1) both",
+      onLogin: (e) => {
+        e.preventDefault();
+        const p = (this.passRef.current && this.passRef.current.value || "").trim();
+        if(p === AUTH_PASS){
+          try { sessionStorage.setItem(AUTH_KEY, "true"); } catch(err){}
+          this.setState({leaving:true, loginError:""});
+          setTimeout(() => { this.toTop(); this.setState(s2 => ({authed:true, leaving:false, entryTick:s2.entryTick+1})); }, 480);
+        } else this.setState({loginError:"كلمة المرور غير صحيحة"});
+      },
+      onLogout: () => { try { sessionStorage.removeItem(AUTH_KEY); } catch(e){} this.setState({authed:false}); },
+      onRefresh: async () => {
+        if(!this.mod) return;
+        this.setState({sync:"loading"});
+        const [d, i] = await Promise.all([this.mod.loadData(), this.mod.loadInitiatives()]);
+        this.setState({data:d.data, inits:i.list, sync:d.sync, syncTime:this.now()});
+      },
+      onExport: () => this.printAs("mf-print-all", "منافع — تقرير متابعة الأداء"),
+      onExportKpi: () => {
+        const r = st.kpiModal ? this.rec(st.kpiModal) : null;
+        this.printAs("mf-print-kpi", "منافع — بطاقة مؤشر " + (r ? r.id : ""));
+      },
+      onExportInit: () => {
+        const v = allI.find(x => x.id === st.initModal);
+        this.printAs("mf-print-init", "منافع — بطاقة مبادرة " + (v ? v.id : ""));
+      },
+      syncText: sync.t, syncColor: sync.c,
+
+      yearLabel: String(st.year),
+      years: (M ? M.YEARS : [2026,2027,2028,2029]).map(y => {
+        const active = st.year === y;
+        return {
+          label: String(y),
+          bg: active ? "#fff" : "rgba(255,255,255,.08)",
+          fg: active ? C.deep : "rgba(255,255,255,.8)",
+          border: active ? "#fff" : "rgba(255,255,255,.24)",
+          mBg: active ? C.deep : "#F5F8F7",
+          mFg: active ? "#fff" : "#4A5A5C",
+          mBorder: active ? C.deep : "#E1E8E6",
+          select: () => this.setState(s2 => ({year:y, tick:s2.tick+1}))
+        };
+      }),
+
+      kpiTotal: allK.length, initTotal: allI.length,
+      overviewRings: [
+        { label:"المؤشرات", count: allK.length, unitLabel:"مؤشر", pctLabel: kAvgAll + "%", ring: segRing },
+        { label:"المبادرات", count: allI.length, unitLabel:"مبادرة", pctLabel: iAvgAll + "%", ring: segRingOf(k => iCount(k), allI.length) }
+      ],
+      statusRows: STATUS_ORDER.map(k => ({
+        label: LBL[k] || "", color: this.statusColor(k), kpi: kCount(k), init: iCount(k)
+      })),
+      reportRing: segRing,
+
+      pillarCards,
+      pulsePillars,
+      viewHint: isKpiView
+        ? "حلقات المحاور الثلاث ولوحة النبض تعرض أداء المؤشرات الاستراتيجية"
+        : "حلقات المحاور الثلاث ولوحة النبض تعرض أداء المبادرات",
+      pulseTitle: isKpiView ? "نبض المؤشرات حسب الهدف" : "نبض المبادرات حسب الهدف",
+
+      query: st.query,
+      onSearch: (e) => {
+        const v = e.target.value;
+        this.setState({query:v});
+        clearTimeout(this._st);
+        if(v.trim()) this._st = setTimeout(() => this.scrollToControls(), 420);
+      },
+      filters: [{k:"all",label:"الكل"}].concat(STATUS_ORDER.map(k => ({k, label: LBL[k] || ""}))).map(f => {
+        const active = st.filter === f.k;
+        const col = f.k === "all" ? C.deep : this.statusColor(f.k);
+        return {
+          label:f.label,
+          bg: active ? col : "#fff",
+          fg: active ? (f.k === "partial" ? "#3A2B08" : "#fff") : "#4A5A5C",
+          border: active ? col : "#E1E8E6",
+          shadow: active ? "0 8px 18px rgba(14,77,89,.22)" : "0 3px 10px rgba(14,40,44,.06)",
+          select: () => { this.setState(s2 => ({filter:f.k, tick:s2.tick+1})); this.scrollToControls(); }
+        };
+      }),
+      hasContext: !!(st.pillar || st.query.trim() || st.filter !== "all"),
+      onResetAll: () => { this.setState(s2 => ({pillar:null, query:"", filter:"all", focus:null, open:{}, tick:s2.tick+1})); this.scrollToControls(); },
+
+      showKpis: st.view === "kpi", showInits: st.view === "init",
+      boardRef: this.boardRef,
+      boardPillars,
+      boardCols: st.focus ? "minmax(0,1fr) 220px" : "repeat(auto-fit,minmax(370px,1fr))",
+      focused: !!st.focus,
+      focusLabel: st.focus ? "عرض تفصيلي لهذا المحور — جميع الأهداف في شبكة واحدة" : "",
+      railAnim: fadeAnim,
+      otherPillars: boardAll.filter(p => p.id !== st.focus).map((p, qi) => ({
+        id:p.id, name:p.name, pctLabel:p.pctLabel, bg:p.headBg, ink:p.headInk,
+        anim: (st.tick % 2 ? "mfRise2" : "mfRise") + " .5s cubic-bezier(.2,.8,.2,1) both",
+        delay: (90 + qi * 90) + "ms",
+        go: () => {
+          this.setState(s2 => {
+            const open = {...s2.open};
+            (P.find(x => x.id === p.id) || {objectives:[]}).objectives.forEach(o => { open[s2.view + "/" + p.id + "/" + o.id] = true; });
+            return { focus: p.id, open, tick: s2.tick + 1 };
+          });
+          this.focusScroll();
+        }
+      })),
+      onClearFocus: () => { this.setState(s2 => ({focus:null, open:{}, tick:s2.tick+1})); this.focusScroll(); },
+      noResults: filtering && boardPillars.every(p => p.noneMatch),
+      noResultsText: isKpiView ? "لا يوجد أي مؤشر يطابق البحث أو الحالة المحددة." : "لا توجد أي مبادرة تطابق البحث أو الحالة المحددة.",
+      panelAnim: (st.tick % 2 ? "mfRise2" : "mfRise") + " .5s cubic-bezier(.2,.8,.2,1) both",
+      views: [
+        {k:"kpi", label:"المؤشرات الاستراتيجية", meta: kpiList.length + " من " + allK.length, col:"#0e4d59"},
+        {k:"init", label:"المبادرات", meta: initList.length + " من " + allI.length, col:"#1f5f6b"}
+      ].map(v => {
+        const active = st.view === v.k;
+        return {
+          label:v.label, meta:v.meta,
+          bg: active ? v.col : "transparent",
+          fg: active ? "#fff" : "#5D6E71",
+          border: active ? v.col : "transparent",
+          shadow: active ? "0 8px 18px rgba(14,77,89,.24)" : "none",
+          select: () => { this.setState(s2 => ({view:v.k, open:{}, focus:null, tick:s2.tick+1})); this.scrollToControls(); }
+        };
+      }),
+      kpiList, initList,
+      kpiEmpty: kpiList.length === 0, initEmpty: initList.length === 0,
+      kpiShownLabel: kpiList.length + " من " + allK.length,
+      initShownLabel: initList.length + " من " + allI.length,
+      kpiAvgLabel: kAvg + "%", initAvgLabel: iAvg + "%",
+
+      kmodal, imodal,
+      treeOpen: st.treeOpen,
+      onOpenTree: () => this.setState({treeOpen:true}),
+      onCloseTree: () => this.setState({treeOpen:false}),
+      onTreeOverlay: (e) => { if(e.target === e.currentTarget) this.setState({treeOpen:false}); },
+      treePillars,
+      onClose: () => this.setState({kpiModal:null, initModal:null}),
+      onOverlayClick: (e) => { if(e.target === e.currentTarget) this.setState({kpiModal:null, initModal:null}); },
+
+      reportStamp: (() => { try { const d = new Date(); return d.toLocaleDateString("ar-SA",{year:"numeric",month:"long",day:"numeric",numberingSystem:"latn"}) + " — " + d.toLocaleTimeString("ar-SA",{hour:"2-digit",minute:"2-digit",numberingSystem:"latn"}); } catch(e){ return ""; } })(),
+      reportPillars
+    };
+  }
+}
+</script>
+</body>
+</html>
